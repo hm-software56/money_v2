@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "777109187266",
+    "firebase_url": "https://money-f8626.firebaseio.com",
+    "project_id": "money-f8626",
+    "storage_bucket": "money-f8626.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:777109187266:android:ec005f6bbd85bb47",
+        "android_client_info": {
+          "package_name": "com.hmsoftware.money"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "777109187266-2ho0k58vmpjbsombvqovop6a4vm5l3dg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEI2BNOGFqrX1aYMdhZxb8dm_0OISHD1s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
