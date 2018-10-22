@@ -45,17 +45,19 @@ class _HomeState extends State<Home> {
   Future<Null> logOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => Login()));
+        Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => Login()));
+         
+   
   }
 
   /*============      List All details  =============*/
-  var totalpay;
-  var totalrecive;
-  var percentpay;
-  var percentrecive;
-  var pay_car;
-  var still_car;
+  var totalpay = '0';
+  var totalrecive = '0';
+  var percentpay = '0';
+  var percentrecive = '0';
+  var pay_car = '0';
+  var still_car = '0';
   int userID;
   var firstName;
   var lastName;
@@ -365,8 +367,8 @@ class _HomeState extends State<Home> {
             trailing: Icon(Icons.accessible_forward),
             onTap: () {
               //Navigator.pushReplacement(
-                //  context, MaterialPageRoute(builder: (context) => ListPayment()));
-                Navigator.of(context).pushNamed('/payment');
+              //  context, MaterialPageRoute(builder: (context) => ListPayment()));
+              Navigator.of(context).pushNamed('/payment');
             },
           ),
           Divider(),
@@ -386,6 +388,7 @@ class _HomeState extends State<Home> {
             trailing: Icon(Icons.accessible),
             onTap: () {
               // Navigator.of(context).pushNamed('/listhouseuser');
+              Navigator.of(context).pushNamed('/recive');
             },
           ),
           Divider(),
@@ -404,7 +407,8 @@ class _HomeState extends State<Home> {
             ),
             trailing: Icon(Icons.local_taxi),
             onTap: () {
-              // Navigator.of(context).pushNamed('/listhouseuser');
+              Navigator.of(context).pushNamed('/daocar');
+
             },
           ),
           Divider(),
@@ -462,146 +466,152 @@ class _HomeState extends State<Home> {
       body: Container(
         padding: const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
         alignment: Alignment.center,
-        child: new ListView(
-          children: <Widget>[
-            Container(
-              decoration: new BoxDecoration(color: Colors.blue),
-              child: ListTile(
-                leading: Icon(
-                  Icons.keyboard,
-                  size: 50.0,
-                  color: Colors.white,
-                ),
-                title: const Text(
-                  'ລາຍ​ຈ່າຍ',
-                  style: TextStyle(color: Colors.white),
-                ),
-                subtitle: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '${totalpay}',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Divider(
-                      color: Colors.white,
-                    ),
-                    Text(
-                      '${percentpay}%',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0.0, 5.0, 5.0, 0.0),
-            ),
-            Container(
-              decoration: new BoxDecoration(color: Colors.green),
-              child: ListTile(
-                leading: Icon(
-                  Icons.style,
-                  size: 50.0,
-                  color: Colors.white,
-                ),
-                title: const Text(
-                  '​ລາຍ​ຮັບ',
-                  style: TextStyle(color: Colors.white),
-                ),
-                subtitle: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '${totalrecive}',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Divider(
-                      color: Colors.white,
-                    ),
-                    Text(
-                      '${percentrecive}%',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ],
+        child: RefreshIndicator(
+        onRefresh: loadAlldetail,
+          child: new ListView(
+            children: <Widget>[
+              Container(
+                decoration: new BoxDecoration(color: Colors.blue),
+                child: ListTile(
+                  onTap: (){
+                    Navigator.of(context).pushNamed('/payment');
+                  },
+                  leading: Icon(
+                    Icons.keyboard,
+                    size: 50.0,
+                    color: Colors.white,
+                  ),
+                  title: const Text(
+                    'ລາຍ​ຈ່າຍ',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  subtitle: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '${totalpay}',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Divider(
+                        color: Colors.white,
+                      ),
+                      Text(
+                        '${percentpay}%',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0.0, 5.0, 5.0, 0.0),
-            ),
-            Container(
-              decoration: new BoxDecoration(color: Colors.blueGrey),
-              child: ListTile(
-                leading: Icon(
-                  Icons.local_taxi,
-                  size: 50.0,
-                  color: Colors.white,
-                ),
-                title: const Text(
-                  'ຈ່າຍ​​ຄ່າ​ລົດ',
-                  style: TextStyle(color: Colors.white),
-                ),
-                subtitle: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'ສ່ວນ​ຄ້າງ: ${still_car}',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Divider(
-                      color: Colors.white,
-                    ),
-                    Text(
-                      'ສ່ວນຈ່າຍ​ແລ້​ວ: ${pay_car}',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0.0, 5.0, 5.0, 0.0),
-            ),
-            Container(
-              decoration: new BoxDecoration(color: Colors.lightBlue),
-              child: ListTile(
-                leading: Icon(
-                  Icons.poll,
-                  size: 50.0,
-                  color: Colors.white,
-                ),
-                title: const Text(
-                  'ລາຍ​ງານ',
-                  style: TextStyle(color: Colors.white),
-                ),
-                subtitle: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '${totalrecive}',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Divider(
-                      color: Colors.white,
-                    ),
-                    Text(
-                      '${totalpay}',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ],
+              SizedBox(height: 20.0),
+              Container(
+                decoration: new BoxDecoration(color: Colors.green),
+                child: ListTile(
+                  onTap: (){
+                    Navigator.of(context).pushNamed('/recive');
+                  },
+                  leading: Icon(
+                    Icons.style,
+                    size: 50.0,
+                    color: Colors.white,
+                  ),
+                  title: const Text(
+                    '​ລາຍ​ຮັບ',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  subtitle: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '${totalrecive}',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Divider(
+                        color: Colors.white,
+                      ),
+                      Text(
+                        '${percentrecive}%',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            )
-          ],
+              SizedBox(height: 20.0),
+              Container(
+                decoration: new BoxDecoration(color: Colors.pink),
+                child: ListTile(
+                  onTap: (){
+                    Navigator.of(context).pushNamed('/daocar');
+                  },
+                  leading: Icon(
+                    Icons.local_taxi,
+                    size: 50.0,
+                    color: Colors.white,
+                  ),
+                  title: const Text(
+                    'ຈ່າຍ​​ຄ່າ​ລົດ',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  subtitle: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'ສ່ວນ​ຄ້າງ: ${still_car}',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Divider(
+                        color: Colors.white,
+                      ),
+                      Text(
+                        'ສ່ວນຈ່າຍ​ແລ້​ວ: ${pay_car}',
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              Container(
+                decoration: new BoxDecoration(color: Colors.lightBlue),
+                child: ListTile(
+                  leading: Icon(
+                    Icons.poll,
+                    size: 50.0,
+                    color: Colors.white,
+                  ),
+                  title: const Text(
+                    'ລາຍ​ງານ',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  subtitle: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '${totalrecive}',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Divider(
+                        color: Colors.white,
+                      ),
+                      Text(
+                        '${totalpay}',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

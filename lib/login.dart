@@ -63,11 +63,11 @@ class _LoginState extends State<Login> {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => Home()));
         } else {
-          alert('ມີ​ຂ​ໍ້​ຜິດ​ພາດ', response.data['error']);
+          alert('ມີ​ຂໍ້ຜິດ​ພາດ', response.data['error']);
         }
       }
     } on DioError catch (e) {
-      alert('ມີ​ຂ​ໍ້​ຜິດ​ພາດ', 'ກວດ​ເບີ່ງ​ການ​ເຊື່ອມ​ຕໍ່​ເນັ​ດ.!');
+      alert('ມີ​ຂໍ້ຜິດ​ພາດ', 'ກວດ​ເບີ່ງ​ການ​ເຊື່ອມ​ຕໍ່​ເນັ​ດ.!');
     }
   }
 
@@ -76,9 +76,9 @@ class _LoginState extends State<Login> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = await prefs.get('token');
     if (token != null) {
-    //  Navigator.pushReplacement(
-       //   context, MaterialPageRoute(builder: (context) => Home()));
-        Navigator.of(context).pushNamed('/home');
+      //  Navigator.pushReplacement(
+      //   context, MaterialPageRoute(builder: (context) => Home()));
+      Navigator.of(context).pushNamed('/home');
     }
   }
 
@@ -93,57 +93,76 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
+        automaticallyImplyLeading: false,
         title: Center(child: new Text('ລະ​ບົບ​ເກັບ​ກຳ​ລາຍ​ຈ່າຍ​ລາຍ​ຮັບ')),
+        // automaticallyImplyLeading: false,
       ),
-      body: new Container(
-        child: new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              new Text(
-                "​ປ້ອນ​ຊື່​ແລ​ະ​ລະຫັດຜ່ານ", 
-                style: new TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w200,
-                    fontFamily: "Roboto"),
+      body: ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.only(left: 24.0, right: 24.0),
+        children: <Widget>[
+          SizedBox(height: 20.0),
+          Hero(
+            tag: 'hero',
+            child: CircleAvatar(
+              backgroundColor: Colors.blue,
+              radius: 48.0,
+              child: Image(
+                image: NetworkImage('${modelurl.urlimg}logo.jpg'),
               ),
-              Divider(),
-              new TextField(
-                decoration: InputDecoration(labelText: 'ປ້ອນ​ຊື່​ເຂົ້າ​ລະ​ບົບ'),
-                onChanged: (value) {
-                  setState(() {
-                    modellogin.username = value;
-                  });
-                },
-              ),
-              new Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-              ),
-              new TextField(
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'ປ້ອນລະ​ຫັດ​ຜ່ານ'),
-                onChanged: (value) {
-                  setState(() {
-                    modellogin.password = value;
-                  });
-                },
-              ),
-              new Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-              ),
-              new RaisedButton.icon(
-                icon: Icon(Icons.lock_open,color:Colors.white,),
-                
-                label: Text('ເຂົ້າ​ລະ​ບົບ'),
-                key: null,
-                onPressed: loginpress,
-                color: Colors.blue,
-              )
-            ]),
-        padding: const EdgeInsets.all(10.0),
-        alignment: Alignment.center,
+            ),
+          ),
+          SizedBox(height: 20.0),
+          Divider(),
+          new TextField(
+            decoration: InputDecoration(
+              labelText: 'ປ້ອນ​ຊື່​ເຂົ້າ​ລະ​ບົບ',
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
+            ),
+            onChanged: (value) {
+              setState(() {
+                modellogin.username = value;
+              });
+            },
+          ),
+          new Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+          ),
+          SizedBox(height: 20.0),
+          new TextField(
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'ປ້ອນລະ​ຫັດ​ຜ່ານ',
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
+            ),
+            onChanged: (value) {
+              setState(() {
+                modellogin.password = value;
+              });
+            },
+          ),
+          SizedBox(height: 20.0),
+          new Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+          ),
+          new RaisedButton.icon(
+            icon: Icon(
+              Icons.lock_open,
+              color: Colors.white,
+            ),
+            label: Text(
+              'ເຂົ້າ​ລະ​ບົບ',
+              style: TextStyle(color: Colors.white),
+            ),
+            key: null,
+            onPressed: loginpress,
+            color: Colors.blue,
+          ),
+        ],
       ),
     );
   }

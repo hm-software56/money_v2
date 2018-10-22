@@ -1,23 +1,24 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:money/daocar/form_daocar.dart';
 import 'package:money/home.dart';
 import 'package:money/models/model_url.dart';
 import 'package:money/payment/form_payment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
-class ListPayment extends StatefulWidget {
+class ListDaocar extends StatefulWidget {
   @override
-  _ListPaymentState createState() => _ListPaymentState();
+  _ListDaocarState createState() => _ListDaocarState();
 }
 
-class _ListPaymentState extends State<ListPayment> {
+class _ListDaocarState extends State<ListDaocar> {
   Dio dio = new Dio();
   ModelUrl modelurl = ModelUrl();
 
   int userID;
-  var listpayment;
+  var listdaocar;
+  var sumdaocar;
   bool isloading = true;
 
   void alert(var title, var detail) {
@@ -53,11 +54,13 @@ class _ListPaymentState extends State<ListPayment> {
     dio.options.connectTimeout = 3000; //5s
     dio.options.receiveTimeout = 3000;
     try {
-      Response response = await dio.get('${modelurl.url}api/listpayment');
+      Response sumresponse = await dio.get('${modelurl.url}api/sumdaocar');
+      Response response = await dio.get('${modelurl.url}api/listdaocar');
       if (response.statusCode == 200) {
         //  print(response.data);
         setState(() {
-          listpayment = response.data;
+          listdaocar = response.data;
+          sumdaocar = sumresponse.data;
           isloading = false;
         });
       }
@@ -106,11 +109,11 @@ class _ListPaymentState extends State<ListPayment> {
     dio.options.receiveTimeout = 3000;
     try {
       Response response =
-          await dio.get('${modelurl.url}api/paymentdelete', data: {'id': id});
+          await dio.get('${modelurl.url}api/daocardelete', data: {'id': id});
       if (response.statusCode == 200) {
         //print(response.data);
         setState(() {
-          listpayment = response.data;
+          listdaocar = response.data;
         });
         isloading = false;
       }
@@ -131,7 +134,7 @@ class _ListPaymentState extends State<ListPayment> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ລາຍ​ການ​ລາຍ​ຈ່າຍ​ທັງ​ໝົດ'),
+        title: Text('ລາຍ​ການ​ສຳ​ລ​ະ​ຄ່າ​ລົດ'),
         leading: new IconButton(
             icon: new Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
@@ -148,21 +151,79 @@ class _ListPaymentState extends State<ListPayment> {
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
-                :ListView.builder(
-                    itemCount: listpayment != null ? listpayment.length : 0,
+                : ListView.builder(
+                    itemCount: listdaocar != null ? listdaocar.length : 0,
                     itemBuilder: (BuildContext context, int index) {
+                      int count = listdaocar.length - index;
                       final formatter = new NumberFormat("#,###");
-                      // listpayment[index]['amount']
+                      var status;
+                      if (listdaocar[index]['status'] == "Paid") {
+                        status = "​ຈ່າຍ​ແລ້ວ";
+                      } else if (listdaocar[index]['status'] == "Saving") {
+                        status =
+                            "​ເກັບ​ໄວ້ ( ${listdaocar[index]['remark']} ) ";
+                      } else {
+                        status =
+                            "​ເອົາ​ໄປ​ເຮັດ​ແນວອື່ນ ( ${listdaocar[index]['remark']} ) ";
+                      }
                       return new Column(
-                        children: <Widget>[ 
+                        children: <Widget>[
+                          count != listdaocar.length
+                              ? Divider()
+                              : Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 30.0,
+                                        child: Container(
+                                          padding: EdgeInsets.only(top: 5.0),
+                                          color: Colors.yellow,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Text(formatter.format(int.parse(
+                                                      sumdaocar['saving'])) +
+                                                  ' ​ໂດ​ລາ'),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                     Expanded(
+                                      child: SizedBox(
+                                        height: 30.0,
+                                        child: Container(
+                                          padding: EdgeInsets.only(top: 5.0),
+                                          color: Colors.green,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Text(formatter.format(int.parse(
+                                                      sumdaocar['paid'])) +
+                                                  ' ​ໂດ​ລາ'),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                     Expanded(
+                                      child: SizedBox(
+                                        height: 30.0,
+                                        child: Container(
+                                          padding: EdgeInsets.only(top: 5.0),
+                                          color: Colors.red,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Text(formatter.format(int.parse(
+                                                      sumdaocar['remark'])) +
+                                                  ' ​ໂດ​ລາ'),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                           new ListTile(
-                            leading: SizedBox(
-                                width: 60.0,
-                                height: 60.0,
-                                child: CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                      '${modelurl.urlimg}${listpayment[index]['user']['photo']}'),
-                                )),
+                            leading: Text('${count}'),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.max,
@@ -182,90 +243,59 @@ class _ListPaymentState extends State<ListPayment> {
                                                 MainAxisAlignment.start,
                                             children: <Widget>[
                                               Text(
-                                                listpayment[index]['typePay']
-                                                    ['name'],
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14.0,
-                                                    color: Colors.black),
-                                              ),
-                                              Text(
                                                 formatter.format(int.parse(
-                                                        listpayment[index]
+                                                        listdaocar[index]
                                                             ['amount'])) +
-                                                    ' ກີບ',
+                                                    ' ​ໂດ​ລາ',
                                                 style: TextStyle(
                                                     color: Colors.red),
                                               ),
                                               Text(
-                                                listpayment[index]
-                                                    ['description'],
+                                                '${status}',
                                                 overflow: TextOverflow.ellipsis,
                                                 softWrap: true,
                                                 maxLines: 2,
                                               ),
                                               Text(
-                                                listpayment[index]['date'],
+                                                listdaocar[index]['date'],
                                               ),
                                             ],
                                           ),
                                         ),
-                                        userID !=
-                                                int.parse(listpayment[index]
-                                                    ['user_id'])
-                                            ? Text('')
-                                            : SizedBox(
-                                                width: 30.0,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: <Widget>[
-                                                    IconButton(
-                                                      icon: Icon(
-                                                        Icons.border_color,
-                                                        color: Colors.green,
-                                                      ),
-                                                      onPressed: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                fullscreenDialog:
-                                                                    true,
-                                                                builder: (context) =>
-                                                                    FormPayment(
-                                                                        listpayment[index]
-                                                                            [
-                                                                            'id'])));
-                                                      },
-                                                    ),
-                                                    IconButton(
-                                                      icon: Icon(
-                                                        Icons
-                                                            .remove_circle_outline,
-                                                        color: Colors.red,
-                                                      ),
-                                                      onPressed: () {
-                                                        delcomfirm(
-                                                            'ແຈ້ງ​ເຕືອນ',
-                                                            'ທ່ານ​ຕ້ອງ​ການ​ລຶບ​ລາຍ​ການນີ້​ແມ​່ນ​ບໍ.?',
-                                                            listpayment[index]
-                                                                ['id']);
-                                                      },
-                                                    ),
-                                                  ],
+                                        SizedBox(
+                                          width: 30.0,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: <Widget>[
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.edit_location,
+                                                  color: Colors.green,
                                                 ),
-                                              )
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          fullscreenDialog:
+                                                              true,
+                                                          builder: (context) =>
+                                                              FormDaocar(
+                                                                  listdaocar[
+                                                                          index]
+                                                                      ['id'])));
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        )
                                       ]),
                                 ),
                               ],
                             ),
-                          ),
-                          new Divider(
-                            height: 2.0,
                           ),
                         ],
                       );
@@ -280,12 +310,7 @@ class _ListPaymentState extends State<ListPayment> {
                 context,
                 MaterialPageRoute(
                     fullscreenDialog: true,
-                    builder: (context) => FormPayment(null)));
-            /* Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    fullscreenDialog: true,
-                    builder: (context) => FormPayment()));*/
+                    builder: (context) => FormDaocar(null)));
           }),
     );
   }

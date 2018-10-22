@@ -2,28 +2,31 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:money/models/model_payment.dart';
+import 'package:money/models/model_recive.dart';
 import 'package:money/models/model_type_pay.dart';
+import 'package:money/models/model_type_recive.dart';
 import 'package:money/models/model_url.dart';
 import 'package:money/payment/list_payment.dart';
+import 'package:money/recive/list_recive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FormPayment extends StatefulWidget {
+class FormRecive extends StatefulWidget {
   var id;
-  FormPayment(this.id);
+  FormRecive(this.id);
   @override
-  _FormPaymentState createState() => _FormPaymentState(this.id);
+  _FormReciveState createState() => _FormReciveState(this.id);
 }
 
-class _FormPaymentState extends State<FormPayment> {
+class _FormReciveState extends State<FormRecive> {
   var id;
-  _FormPaymentState(this.id);
-  ModelPayment modelpayment = ModelPayment();
+  _FormReciveState(this.id);
+  ModelRecive modelrecive = ModelRecive();
   ModelUrl modelurl = ModelUrl();
-  ModelTypePay modeltypepay = ModelTypePay();
+  ModelTypeRecive modeltyperecive = ModelTypeRecive();
   Dio dio = Dio();
 
-  List listtypepay = [''];
-  var maptypepay;
+  List listtyperecive = [''];
+  var maptyperecive;
   bool isloading = true;
   bool isloadingsave = false;
   void alert(var title, var detail) {
@@ -56,15 +59,15 @@ class _FormPaymentState extends State<FormPayment> {
       dio.options.receiveTimeout = 3000;
       try {
         Response response =
-            await dio.get('${modelurl.url}api/listpaymentpk', data: {'id': id});
+            await dio.get('${modelurl.url}api/listrecivepk', data: {'id': id});
         if (response.statusCode == 200) {
           setState(() {
-            modelpayment.controller_amount.text = response.data['amount'];
-            modelpayment.controller_description.text =
+            modelrecive.controller_amount.text = response.data['amount'];
+            modelrecive.controller_description.text =
                 response.data['description'];
-            modelpayment.controller_date.text = response.data['date'];
-            modelpayment.controller_type_pay_id.text =
-                response.data['typePay']['name'];
+            modelrecive.controller_date.text = response.data['date'];
+            modelrecive.controller_type_recive_id.text =
+                response.data['tyeReceive']['name'];
           });
         }
       } on DioError catch (e) {
@@ -79,14 +82,14 @@ class _FormPaymentState extends State<FormPayment> {
     dio.options.connectTimeout = 3000; //5s
     dio.options.receiveTimeout = 3000;
     try {
-      Response response = await dio.get('${modelurl.url}api/listtypepay');
+      Response response = await dio.get('${modelurl.url}api/listtyperecive');
       if (response.statusCode == 200) {
         for (var item in response.data) {
-          listtypepay.add('${item['name']}');
+          listtyperecive.add('${item['name']}');
         }
         setState(() {
-          maptypepay = response.data;
-          listtypepay = listtypepay;
+          maptyperecive = response.data;
+          listtyperecive = listtyperecive;
         });
         isloading = false;
       }
@@ -113,8 +116,8 @@ class _FormPaymentState extends State<FormPayment> {
     if (result == null) return;
 
     setState(() {
-      modelpayment.controller_date.text = new DateFormat.yMd().format(result);
-      modelpayment.date = modelpayment.controller_date.text;
+      modelrecive.controller_date.text = new DateFormat.yMd().format(result);
+      modelrecive.date = modelrecive.controller_date.text;
     });
   }
 
@@ -138,30 +141,30 @@ class _FormPaymentState extends State<FormPayment> {
     var userID = await prefs.get('token');
     dio.options.connectTimeout = 3000; //5s
     dio.options.receiveTimeout = 3000;
-    for (var item in maptypepay) {
-      if (item['name'] == modelpayment.controller_type_pay_id.text) {
+    for (var item in maptyperecive) {
+      if (item['name'] == modelrecive.controller_type_recive_id.text) {
         type_id = item['id'];
       }
     }
 
     FormData formData = new FormData.from({
       'type_id': type_id,
-      'amount': modelpayment.controller_amount.text,
-      'description': modelpayment.controller_description.text,
-      'date': modelpayment.controller_date.text,
+      'amount': modelrecive.controller_amount.text,
+      'description': modelrecive.controller_description.text,
+      'date': modelrecive.controller_date.text,
       'user_id': userID,
       'id': id, // use for create or update if id=null is create
     });
     try {
       Response response = await dio
-          .post('${modelurl.url}api/createorupdatepayment', data: formData);
+          .post('${modelurl.url}api/createorupdaterecive', data: formData);
       if (response.statusCode == 200) {
         setState(() {
           isloadingsave = false;
         });
         if (response.data == true) {
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => ListPayment()));
+              context, MaterialPageRoute(builder: (context) => ListRecive()));
         } else {
           alert('ມີ​ຂ​ໍ້​ຜິດ​ພາດ', response.data);
         }
@@ -186,7 +189,8 @@ class _FormPaymentState extends State<FormPayment> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: id == null ? Text('ປ້ອນ​​ລາ​ຍ​ຈ່າຍ') : Text('​ແກ້​ໄຂລາ​ຍ​ຈ່າຍ'),
+        title:
+            id == null ? Text('ປ້ອນ​​ລາ​ຍ​​ຮັບ') : Text('​​​ແກ້​ໄຂລາ​ຍ​​ຮັບ'),
       ),
       body: new Container(
         child: isloading
@@ -198,23 +202,24 @@ class _FormPaymentState extends State<FormPayment> {
                 children: <Widget>[
                   InputDecorator(
                     decoration: InputDecoration(
-                      labelText: 'ເລືອກ​ປະ​ເພດ​ລາຍ​ຈ່າຍ',
+                      labelText: 'ເລືອກ​ປະ​ເພດ​ລາຍ​ຮັບ​',
                       contentPadding:
                           EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0)),
                     ),
-                    isEmpty: modelpayment.controller_type_pay_id.text == null,
+                    isEmpty: modelrecive.controller_type_recive_id.text == null,
                     child: new DropdownButtonHideUnderline(
                       child: new DropdownButton<String>(
-                        value: modelpayment.controller_type_pay_id.text,
+                        value: modelrecive.controller_type_recive_id.text,
                         isDense: true,
                         onChanged: (String newValue) {
                           setState(() {
-                            modelpayment.controller_type_pay_id.text = newValue;
+                            modelrecive.controller_type_recive_id.text =
+                                newValue;
                           });
                         },
-                        items: listtypepay.map((value) {
+                        items: listtyperecive.map((value) {
                           return new DropdownMenuItem<String>(
                             value: value,
                             child: new Text(value),
@@ -225,25 +230,25 @@ class _FormPaymentState extends State<FormPayment> {
                   ),
                   SizedBox(height: 20.0),
                   TextField(
-                    controller: modelpayment.controller_amount,
+                    controller: modelrecive.controller_amount,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'ຈ​ຳ​ນວນ​ເງີນຈ່າຍ',
+                      labelText: 'ຈ​ຳ​ນວນ​ເງີນຮັບ',
                       contentPadding:
                           EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0)),
                     ),
                     onChanged: (value) {
-                      modelpayment.amount = value;
+                      modelrecive.amount = value;
                     },
                   ),
                   SizedBox(height: 20.0),
                   TextField(
-                    controller: modelpayment.controller_description,
+                    controller: modelrecive.controller_description,
                     maxLines: 3,
                     decoration: InputDecoration(
-                      labelText: 'ອະ​ທີ​ບາຍ​ຈ່າຍ​ຍັງ',
+                      labelText: 'ອະ​ທີ​ບາຍ​ຮັບຍັງ',
                       contentPadding:
                           EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(
@@ -253,13 +258,13 @@ class _FormPaymentState extends State<FormPayment> {
                   SizedBox(height: 20.0),
                   InkWell(
                     onTap: () =>
-                        _chooseDate(context, modelpayment.controller_date.text),
+                        _chooseDate(context, modelrecive.controller_date.text),
                     child: IgnorePointer(
                       child: TextFormField(
                         // validator: widget.validator,
-                        controller: modelpayment.controller_date,
+                        controller: modelrecive.controller_date,
                         decoration: InputDecoration(
-                          labelText: 'ວັນ​ທີ່​ຈ່າຍ',
+                          labelText: 'ວັນ​ທີ່​ຮັບ',
                           contentPadding:
                               EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                           border: OutlineInputBorder(

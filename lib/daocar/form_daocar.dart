@@ -1,29 +1,34 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:money/models/model_payment.dart';
-import 'package:money/models/model_type_pay.dart';
+import 'package:money/daocar/list_daocar.dart';
+import 'package:money/models/model_daocar.dart';
 import 'package:money/models/model_url.dart';
-import 'package:money/payment/list_payment.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class FormPayment extends StatefulWidget {
+class FormDaocar extends StatefulWidget {
   var id;
-  FormPayment(this.id);
+  FormDaocar(this.id);
   @override
-  _FormPaymentState createState() => _FormPaymentState(this.id);
+  _FormDaocarState createState() => _FormDaocarState(this.id);
 }
 
-class _FormPaymentState extends State<FormPayment> {
+class _FormDaocarState extends State<FormDaocar> {
   var id;
-  _FormPaymentState(this.id);
-  ModelPayment modelpayment = ModelPayment();
+  _FormDaocarState(this.id);
+  ModelDaocar modeldaocar = ModelDaocar();
   ModelUrl modelurl = ModelUrl();
-  ModelTypePay modeltypepay = ModelTypePay();
   Dio dio = Dio();
-
-  List listtypepay = [''];
-  var maptypepay;
+  List liststatus = ['', 'ເກັບ​ໄວ້', '​ຈ່າຍ', '​ເອົາ​ໄປ​ໃຊ້​ແນວ​ອື່ນ'];
+  Map mapstatus = {
+    'Saving': 'ເກັບ​ໄວ້',
+    'Paid': '​ຈ່າຍ',
+    'remark': '​ເອົາ​ໄປ​ໃຊ້​ແນວ​ອື່ນ'
+  };
+  Map mapsavestatus = {
+    'ເກັບ​ໄວ້': 'Saving',
+    '​ຈ່າຍ': 'Paid',
+    '​ເອົາ​ໄປ​ໃຊ້​ແນວ​ອື່ນ': 'remark'
+  };
   bool isloading = true;
   bool isloadingsave = false;
   void alert(var title, var detail) {
@@ -49,50 +54,35 @@ class _FormPaymentState extends State<FormPayment> {
     );
   }
 
-/*==================== Load data payment show to field  ==================*/
-  Future loaddatapayment() async {
+/*==================== Load data daocar show to field  ==================*/
+  Future loaddatadaocar() async {
     if (id != null) {
       dio.options.connectTimeout = 3000; //5s
       dio.options.receiveTimeout = 3000;
       try {
         Response response =
-            await dio.get('${modelurl.url}api/listpaymentpk', data: {'id': id});
+            await dio.get('${modelurl.url}api/listdaocarpk', data: {'id': id});
         if (response.statusCode == 200) {
           setState(() {
-            modelpayment.controller_amount.text = response.data['amount'];
-            modelpayment.controller_description.text =
-                response.data['description'];
-            modelpayment.controller_date.text = response.data['date'];
-            modelpayment.controller_type_pay_id.text =
-                response.data['typePay']['name'];
+            modeldaocar.controller_amount.text = response.data['amount'];
+            modeldaocar.controller_status.text =
+                mapstatus[response.data['status']];
+            modeldaocar.controller_date.text = response.data['date'];
+            modeldaocar.controller_remark.text = response.data['remark'];
+
+            isloading = false;
           });
         }
       } on DioError catch (e) {
-        isloading = false;
+        setState(() {
+          isloading = false;
+        });
         alert('ມີ​ຂ​ໍ້​ຜິດ​ພາດ', 'ກວດ​ເບີ່ງ​ການ​ເຊື່ອມ​ຕໍ່​ເນັ​ດ.!');
       }
-    }
-  }
-
-/*==================== Load list type payment  ==================*/
-  Future loadlisttypepayment() async {
-    dio.options.connectTimeout = 3000; //5s
-    dio.options.receiveTimeout = 3000;
-    try {
-      Response response = await dio.get('${modelurl.url}api/listtypepay');
-      if (response.statusCode == 200) {
-        for (var item in response.data) {
-          listtypepay.add('${item['name']}');
-        }
-        setState(() {
-          maptypepay = response.data;
-          listtypepay = listtypepay;
-        });
+    } else {
+      setState(() {
         isloading = false;
-      }
-    } on DioError catch (e) {
-      isloading = false;
-      alert('ມີ​ຂ​ໍ້​ຜິດ​ພາດ', 'ກວດ​ເບີ່ງ​ການ​ເຊື່ອມ​ຕໍ່​ເນັ​ດ.!');
+      });
     }
   }
 
@@ -113,8 +103,8 @@ class _FormPaymentState extends State<FormPayment> {
     if (result == null) return;
 
     setState(() {
-      modelpayment.controller_date.text = new DateFormat.yMd().format(result);
-      modelpayment.date = modelpayment.controller_date.text;
+      modeldaocar.controller_date.text = new DateFormat.yMd().format(result);
+      modeldaocar.date = modeldaocar.controller_date.text;
     });
   }
 
@@ -132,36 +122,25 @@ class _FormPaymentState extends State<FormPayment> {
     setState(() {
       isloadingsave = true;
     });
-    // print(id);
-    var type_id;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var userID = await prefs.get('token');
     dio.options.connectTimeout = 3000; //5s
     dio.options.receiveTimeout = 3000;
-    for (var item in maptypepay) {
-      if (item['name'] == modelpayment.controller_type_pay_id.text) {
-        type_id = item['id'];
-      }
-    }
-
     FormData formData = new FormData.from({
-      'type_id': type_id,
-      'amount': modelpayment.controller_amount.text,
-      'description': modelpayment.controller_description.text,
-      'date': modelpayment.controller_date.text,
-      'user_id': userID,
+      'amount': modeldaocar.controller_amount.text,
+      'status': mapsavestatus[modeldaocar.controller_status.text],
+      'date': modeldaocar.controller_date.text,
+      'remark': modeldaocar.controller_remark.text,
       'id': id, // use for create or update if id=null is create
     });
     try {
       Response response = await dio
-          .post('${modelurl.url}api/createorupdatepayment', data: formData);
+          .post('${modelurl.url}api/createorupdatedaocar', data: formData);
       if (response.statusCode == 200) {
         setState(() {
           isloadingsave = false;
         });
         if (response.data == true) {
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => ListPayment()));
+              context, MaterialPageRoute(builder: (context) => ListDaocar()));
         } else {
           alert('ມີ​ຂ​ໍ້​ຜິດ​ພາດ', response.data);
         }
@@ -178,15 +157,16 @@ class _FormPaymentState extends State<FormPayment> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadlisttypepayment();
-    loaddatapayment();
+    loaddatadaocar();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: id == null ? Text('ປ້ອນ​​ລາ​ຍ​ຈ່າຍ') : Text('​ແກ້​ໄຂລາ​ຍ​ຈ່າຍ'),
+        title: id == null
+            ? Text('ປ້ອນ​​ສຳ​ລະ​ຄ່າ​ລົດ')
+            : Text('​ແກ້​ໄຂສຳ​ລະ​ຄ່າ​ລົດ'),
       ),
       body: new Container(
         child: isloading
@@ -196,25 +176,40 @@ class _FormPaymentState extends State<FormPayment> {
             : ListView(
                 padding: EdgeInsets.only(top: 50.0),
                 children: <Widget>[
-                  InputDecorator(
+                  TextField(
+                    controller: modeldaocar.controller_amount,
+                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'ເລືອກ​ປະ​ເພດ​ລາຍ​ຈ່າຍ',
+                      labelText: 'ຈ​ຳ​ນວນ​ເງີນສຳ​ລະ',
                       contentPadding:
                           EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0)),
                     ),
-                    isEmpty: modelpayment.controller_type_pay_id.text == null,
+                    onChanged: (value) {
+                      modeldaocar.amount = value;
+                    },
+                  ),
+                  SizedBox(height: 20.0),
+                  InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: 'ເລືອກ​ສະ​ຖາ​ນະ',
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0)),
+                    ),
+                    isEmpty: modeldaocar.controller_status.text == null,
                     child: new DropdownButtonHideUnderline(
                       child: new DropdownButton<String>(
-                        value: modelpayment.controller_type_pay_id.text,
+                        value: modeldaocar.controller_status.text,
                         isDense: true,
                         onChanged: (String newValue) {
                           setState(() {
-                            modelpayment.controller_type_pay_id.text = newValue;
+                            modeldaocar.controller_status.text = newValue;
                           });
                         },
-                        items: listtypepay.map((value) {
+                        items: liststatus.map((value) {
                           return new DropdownMenuItem<String>(
                             value: value,
                             child: new Text(value),
@@ -225,25 +220,10 @@ class _FormPaymentState extends State<FormPayment> {
                   ),
                   SizedBox(height: 20.0),
                   TextField(
-                    controller: modelpayment.controller_amount,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'ຈ​ຳ​ນວນ​ເງີນຈ່າຍ',
-                      contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0)),
-                    ),
-                    onChanged: (value) {
-                      modelpayment.amount = value;
-                    },
-                  ),
-                  SizedBox(height: 20.0),
-                  TextField(
-                    controller: modelpayment.controller_description,
+                    controller: modeldaocar.controller_remark,
                     maxLines: 3,
                     decoration: InputDecoration(
-                      labelText: 'ອະ​ທີ​ບາຍ​ຈ່າຍ​ຍັງ',
+                      labelText: 'ຄຳ​ຄິດ​ເຫັນ',
                       contentPadding:
                           EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(
@@ -253,13 +233,13 @@ class _FormPaymentState extends State<FormPayment> {
                   SizedBox(height: 20.0),
                   InkWell(
                     onTap: () =>
-                        _chooseDate(context, modelpayment.controller_date.text),
+                        _chooseDate(context, modeldaocar.controller_date.text),
                     child: IgnorePointer(
                       child: TextFormField(
                         // validator: widget.validator,
-                        controller: modelpayment.controller_date,
+                        controller: modeldaocar.controller_date,
                         decoration: InputDecoration(
-                          labelText: 'ວັນ​ທີ່​ຈ່າຍ',
+                          labelText: 'ວັນ​ທີ່​ສຳ​ລະ',
                           contentPadding:
                               EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                           border: OutlineInputBorder(

@@ -1,23 +1,23 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:money/home.dart';
 import 'package:money/models/model_url.dart';
 import 'package:money/payment/form_payment.dart';
+import 'package:money/recive/form_recive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
-class ListPayment extends StatefulWidget {
+class ListRecive extends StatefulWidget {
   @override
-  _ListPaymentState createState() => _ListPaymentState();
+  _ListReciveState createState() => _ListReciveState();
 }
 
-class _ListPaymentState extends State<ListPayment> {
+class _ListReciveState extends State<ListRecive> {
   Dio dio = new Dio();
   ModelUrl modelurl = ModelUrl();
 
   int userID;
-  var listpayment;
+  var listrecive;
   bool isloading = true;
 
   void alert(var title, var detail) {
@@ -43,7 +43,7 @@ class _ListPaymentState extends State<ListPayment> {
     );
   }
 
-  Future loadlistpayment() async {
+  Future loadlistrecive() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int token = await prefs.get('token');
     setState(() {
@@ -53,11 +53,11 @@ class _ListPaymentState extends State<ListPayment> {
     dio.options.connectTimeout = 3000; //5s
     dio.options.receiveTimeout = 3000;
     try {
-      Response response = await dio.get('${modelurl.url}api/listpayment');
+      Response response = await dio.get('${modelurl.url}api/listrecive');
       if (response.statusCode == 200) {
         //  print(response.data);
         setState(() {
-          listpayment = response.data;
+          listrecive = response.data;
           isloading = false;
         });
       }
@@ -106,11 +106,11 @@ class _ListPaymentState extends State<ListPayment> {
     dio.options.receiveTimeout = 3000;
     try {
       Response response =
-          await dio.get('${modelurl.url}api/paymentdelete', data: {'id': id});
+          await dio.get('${modelurl.url}api/recivedelete', data: {'id': id});
       if (response.statusCode == 200) {
         //print(response.data);
         setState(() {
-          listpayment = response.data;
+          listrecive = response.data;
         });
         isloading = false;
       }
@@ -124,14 +124,14 @@ class _ListPaymentState extends State<ListPayment> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadlistpayment();
+    loadlistrecive();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ລາຍ​ການ​ລາຍ​ຈ່າຍ​ທັງ​ໝົດ'),
+        title: Text('ລາຍ​ການ​ລາຍຮັບ​ທັງ​ໝົດ'),
         leading: new IconButton(
             icon: new Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
@@ -143,13 +143,13 @@ class _ListPaymentState extends State<ListPayment> {
           padding: const EdgeInsets.all(5.0),
           alignment: Alignment.center,
           child: RefreshIndicator(
-            onRefresh: loadlistpayment,
+            onRefresh: loadlistrecive,
             child: isloading
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
                 :ListView.builder(
-                    itemCount: listpayment != null ? listpayment.length : 0,
+                    itemCount: listrecive != null ? listrecive.length : 0,
                     itemBuilder: (BuildContext context, int index) {
                       final formatter = new NumberFormat("#,###");
                       // listpayment[index]['amount']
@@ -161,7 +161,7 @@ class _ListPaymentState extends State<ListPayment> {
                                 height: 60.0,
                                 child: CircleAvatar(
                                   backgroundImage: NetworkImage(
-                                      '${modelurl.urlimg}${listpayment[index]['user']['photo']}'),
+                                      '${modelurl.urlimg}${listrecive[index]['user']['photo']}'),
                                 )),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +182,7 @@ class _ListPaymentState extends State<ListPayment> {
                                                 MainAxisAlignment.start,
                                             children: <Widget>[
                                               Text(
-                                                listpayment[index]['typePay']
+                                                listrecive[index]['tyeReceive']
                                                     ['name'],
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
@@ -191,27 +191,27 @@ class _ListPaymentState extends State<ListPayment> {
                                               ),
                                               Text(
                                                 formatter.format(int.parse(
-                                                        listpayment[index]
+                                                        listrecive[index]
                                                             ['amount'])) +
                                                     ' ກີບ',
                                                 style: TextStyle(
                                                     color: Colors.red),
                                               ),
                                               Text(
-                                                listpayment[index]
+                                                listrecive[index]
                                                     ['description'],
                                                 overflow: TextOverflow.ellipsis,
                                                 softWrap: true,
                                                 maxLines: 2,
                                               ),
                                               Text(
-                                                listpayment[index]['date'],
+                                                listrecive[index]['date'],
                                               ),
                                             ],
                                           ),
                                         ),
                                         userID !=
-                                                int.parse(listpayment[index]
+                                                int.parse(listrecive[index]
                                                     ['user_id'])
                                             ? Text('')
                                             : SizedBox(
@@ -236,8 +236,8 @@ class _ListPaymentState extends State<ListPayment> {
                                                                 fullscreenDialog:
                                                                     true,
                                                                 builder: (context) =>
-                                                                    FormPayment(
-                                                                        listpayment[index]
+                                                                    FormRecive(
+                                                                        listrecive[index]
                                                                             [
                                                                             'id'])));
                                                       },
@@ -252,7 +252,7 @@ class _ListPaymentState extends State<ListPayment> {
                                                         delcomfirm(
                                                             'ແຈ້ງ​ເຕືອນ',
                                                             'ທ່ານ​ຕ້ອງ​ການ​ລຶບ​ລາຍ​ການນີ້​ແມ​່ນ​ບໍ.?',
-                                                            listpayment[index]
+                                                            listrecive[index]
                                                                 ['id']);
                                                       },
                                                     ),
@@ -273,14 +273,14 @@ class _ListPaymentState extends State<ListPayment> {
                   ),
           )),
       floatingActionButton: new FloatingActionButton(
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.green,
           child: new Icon(Icons.add_circle),
           onPressed: () {
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     fullscreenDialog: true,
-                    builder: (context) => FormPayment(null)));
+                    builder: (context) => FormRecive(null)));
             /* Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
