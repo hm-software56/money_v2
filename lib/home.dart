@@ -67,6 +67,7 @@ class _HomeState extends State<Home> {
   File _imageBg;
   bool isloadimgBg = false;
   var photo_bg;
+  bool isloading=true;
 
   Future loadAlldetail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -95,9 +96,13 @@ class _HomeState extends State<Home> {
           percentrecive = response.data['percent_recive'];
           pay_car = response.data['pay_car'];
           still_car = response.data['still_car'];
+          isloading=false;
         });
       }
     } on DioError catch (e) {
+      setState(() {
+              isloading=false;
+            });
       alert('ມີ​ຂ​ໍ້​ຜິດ​ພາດ', 'ກວດ​ເບີ່ງ​ການ​ເຊື່ອມ​ຕໍ່​ເນັ​ດ.!');
     }
   }
@@ -468,8 +473,9 @@ class _HomeState extends State<Home> {
         alignment: Alignment.center,
         child: RefreshIndicator(
         onRefresh: loadAlldetail,
-          child: new ListView(
+          child: isloading? Center(child: CircularProgressIndicator(),):ListView(
             children: <Widget>[
+              SizedBox(height: 20.0),
               Container(
                 decoration: new BoxDecoration(color: Colors.blue),
                 child: ListTile(

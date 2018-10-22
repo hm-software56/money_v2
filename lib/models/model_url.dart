@@ -1,6 +1,6 @@
 class ModelUrl{
-  String url="http://192.168.43.33/index.php?r=";
-  String urlimg="http://192.168.43.33/images/";
+  String url="http://dev.cyberia.la/testda/api/web/index.php?r=";
+  String urlimg="http://dev.cyberia.la/testda/api/web/images/";
   
   
 }
