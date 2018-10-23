@@ -6,7 +6,7 @@ import 'package:money/home.dart';
 import 'package:money/models/model_login.dart';
 import 'package:money/models/model_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:onesignal/onesignal.dart';
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
   @override
@@ -44,10 +44,12 @@ class _LoginState extends State<Login> {
 
   /*============      Login =============*/
   Future loginpress() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var playerID = await prefs.get('playerID');
     dio.options.connectTimeout = 3000; //5s
     dio.options.receiveTimeout = 3000;
     FormData formData = new FormData.from(
-        {'username': modellogin.username, 'password': modellogin.password});
+        {'username': modellogin.username, 'password': modellogin.password,'player_id':playerID});
     try {
       Response response =
           await dio.post('${modelurl.url}api/login', data: formData);
@@ -75,6 +77,20 @@ class _LoginState extends State<Login> {
   Future<Null> checkLoginged() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = await prefs.get('token');
+
+    /*============ get token =============*/
+    OneSignal.shared.init("8611a545-6f5f-4e15-9e3a-b992ae4c6cac");
+    OneSignal.shared.promptUserForPushNotificationPermission();
+    var status = await OneSignal.shared.getPermissionSubscriptionState();
+    var playerId = status.subscriptionStatus.userId;
+    prefs.setString('playerID',playerId);
+
+    OneSignal.shared
+        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      // will be called whenever a notification is opened/button pressed.
+      Navigator.of(context).pushNamed('/daocar');
+    });
+
     if (token != null) {
       //  Navigator.pushReplacement(
       //   context, MaterialPageRoute(builder: (context) => Home()));

@@ -4,6 +4,7 @@ import 'package:money/home.dart';
 import 'package:money/login.dart';
 import 'package:money/payment/list_payment.dart';
 import 'package:money/recive/list_recive.dart';
+import 'package:money/test.dart';
 
 void main() {
   runApp(new MyApp());
