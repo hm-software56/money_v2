@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:money/login.dart';
 import 'package:money/models/model_payment.dart';
 import 'package:money/models/model_recive.dart';
 import 'package:money/models/model_type_pay.dart';
@@ -29,6 +30,23 @@ class _FormReciveState extends State<FormRecive> {
   var maptyperecive;
   bool isloading = true;
   bool isloadingsave = false;
+
+  /*========== Login expired ================*/
+  Future<Null> checkloginexiped() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var now = new DateTime.now();
+    var formatter = new DateFormat('h');
+    String formatted = formatter.format(now);
+    if (int.parse(formatted) > prefs.getInt('time')) {
+      prefs.remove('token');
+      prefs.remove('time');
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Login()));
+    } else {
+      prefs.setInt('time', int.parse(formatted) + 2);
+    }
+  }
+  /* ======================= alert ==========================*/
   void alert(var title, var detail) {
     showDialog(
       context: context,
@@ -181,6 +199,7 @@ class _FormReciveState extends State<FormRecive> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkloginexiped();
     loadlisttypepayment();
     loaddatapayment();
   }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:money/login.dart';
 import 'package:money/models/model_url.dart';
 
@@ -19,6 +20,24 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   Dio dio = new Dio();
   ModelUrl modelurl = ModelUrl();
+
+  /*========== Login expired ================*/
+  Future<Null> checkloginexiped() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var now = new DateTime.now();
+    var formatter = new DateFormat('h');
+    String formatted = formatter.format(now);
+    if (int.parse(formatted) > prefs.getInt('time')) {
+      prefs.remove('token');
+      prefs.remove('time');
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Login()));
+    } else {
+      prefs.setInt('time', int.parse(formatted) + 2);
+    }
+  }
+
+  /*================== alert ==============*/
   void alert(var title, var detail) {
     showDialog(
       context: context,
@@ -46,6 +65,7 @@ class _HomeState extends State<Home> {
   Future<Null> logOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
+    prefs.setInt('time',0);
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => Login()));
   }
@@ -215,12 +235,11 @@ class _HomeState extends State<Home> {
     }
   }
 
- 
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkloginexiped();
     loadAlldetail();
   }
 
@@ -591,6 +610,9 @@ class _HomeState extends State<Home> {
                     Container(
                       decoration: new BoxDecoration(color: Colors.lightBlue),
                       child: ListTile(
+                        onTap: (){
+                          Navigator.of(context).pushNamed('/mainchart');
+                        },
                         leading: Icon(
                           Icons.poll,
                           size: 50.0,

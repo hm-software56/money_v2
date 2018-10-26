@@ -7,6 +7,7 @@ import 'package:money/models/model_login.dart';
 import 'package:money/models/model_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:onesignal/onesignal.dart';
+
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
   @override
@@ -18,6 +19,7 @@ class _LoginState extends State<Login> {
   Dio dio = new Dio();
   ModelUrl modelurl = ModelUrl();
 
+  bool isloading = false;
   /* ============== function alert ========*/
   void alert(var title, var detail) {
     showDialog(
@@ -44,12 +46,18 @@ class _LoginState extends State<Login> {
 
   /*============      Login =============*/
   Future loginpress() async {
+    setState(() {
+      isloading = true;
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var playerID = await prefs.get('playerID');
     dio.options.connectTimeout = 3000; //5s
     dio.options.receiveTimeout = 3000;
-    FormData formData = new FormData.from(
-        {'username': modellogin.username, 'password': modellogin.password,'player_id':playerID});
+    FormData formData = new FormData.from({
+      'username': modellogin.username,
+      'password': modellogin.password,
+      'player_id': playerID
+    });
     try {
       Response response =
           await dio.post('${modelurl.url}api/login', data: formData);
@@ -61,14 +69,20 @@ class _LoginState extends State<Login> {
           prefs.setString('first_name', response.data['first_name']);
           prefs.setString('photo_profile', response.data['photo']);
           prefs.setString('photo_bg', response.data['bg_photo']);
-
+          modelurl.settimeloginexpiry();
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => Home()));
         } else {
+          setState(() {
+            isloading = false;
+          });
           alert('ມີ​ຂໍ້ຜິດ​ພາດ', response.data['error']);
         }
       }
     } on DioError catch (e) {
+      setState(() {
+        isloading = false;
+      });
       alert('ມີ​ຂໍ້ຜິດ​ພາດ', 'ກວດ​ເບີ່ງ​ການ​ເຊື່ອມ​ຕໍ່​ເນັ​ດ.!');
     }
   }
@@ -83,12 +97,12 @@ class _LoginState extends State<Login> {
     OneSignal.shared.promptUserForPushNotificationPermission();
     var status = await OneSignal.shared.getPermissionSubscriptionState();
     var playerId = status.subscriptionStatus.userId;
-    prefs.setString('playerID',playerId);
+    prefs.setString('playerID', playerId);
 
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
       // will be called whenever a notification is opened/button pressed.
-      Navigator.of(context).pushNamed('/daocar');
+      Navigator.of(context).pushNamed('/home');
     });
 
     if (token != null) {
@@ -165,19 +179,21 @@ class _LoginState extends State<Login> {
           new Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
           ),
-          new RaisedButton.icon(
-            icon: Icon(
-              Icons.lock_open,
-              color: Colors.white,
-            ),
-            label: Text(
-              'ເຂົ້າ​ລະ​ບົບ',
-              style: TextStyle(color: Colors.white),
-            ),
-            key: null,
-            onPressed: loginpress,
-            color: Colors.blue,
-          ),
+          isloading
+              ? Center(child: CircularProgressIndicator())
+              : RaisedButton.icon(
+                  icon: Icon(
+                    Icons.lock_open,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    'ເຂົ້າ​ລະ​ບົບ',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  key: null,
+                  onPressed: loginpress,
+                  color: Colors.blue,
+                ),
         ],
       ),
     );

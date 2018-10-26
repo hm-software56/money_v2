@@ -28,6 +28,7 @@ dependencies:
   intl: ">=0.14.0"
   flutter_launcher_icons: ^0.6.1
   onesignal: ^1.0.2
+  charts_flutter: any
 
 
 flutter_icons:

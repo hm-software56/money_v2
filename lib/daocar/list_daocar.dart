@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:money/daocar/form_daocar.dart';
 import 'package:money/home.dart';
+import 'package:money/login.dart';
 import 'package:money/models/model_url.dart';
 import 'package:money/payment/form_payment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +21,22 @@ class _ListDaocarState extends State<ListDaocar> {
   var listdaocar;
   var sumdaocar;
   bool isloading = true;
-
+/*========== Login expired ================*/
+  Future<Null> checkloginexiped() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var now = new DateTime.now();
+    var formatter = new DateFormat('h');
+    String formatted = formatter.format(now);
+    if (int.parse(formatted) > prefs.getInt('time')) {
+      prefs.remove('token');
+      prefs.remove('time');
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Login()));
+    } else {
+      prefs.setInt('time', int.parse(formatted) + 2);
+    }
+  }
+  /* ============================= alert ================*/
   void alert(var title, var detail) {
     showDialog(
       context: context,
@@ -127,6 +143,7 @@ class _ListDaocarState extends State<ListDaocar> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkloginexiped();
     loadlistpayment();
   }
 
