@@ -76,8 +76,8 @@ class _FormDaocarState extends State<FormDaocar> {
 /*==================== Load data daocar show to field  ==================*/
   Future loaddatadaocar() async {
     if (id != null) {
-      dio.options.connectTimeout = 3000; //5s
-      dio.options.receiveTimeout = 3000;
+      dio.options.connectTimeout = 12000; //5s
+      dio.options.receiveTimeout = 12000;
       try {
         Response response =
             await dio.get('${modelurl.url}api/listdaocarpk', data: {'id': id});
@@ -141,8 +141,8 @@ class _FormDaocarState extends State<FormDaocar> {
     setState(() {
       isloadingsave = true;
     });
-    dio.options.connectTimeout = 3000; //5s
-    dio.options.receiveTimeout = 3000;
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     FormData formData = new FormData.from({
       'amount': modeldaocar.controller_amount.text,
       'status': mapsavestatus[modeldaocar.controller_status.text],

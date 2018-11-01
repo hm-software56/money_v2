@@ -51,8 +51,8 @@ class _LoginState extends State<Login> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var playerID = await prefs.get('playerID');
-    dio.options.connectTimeout = 3000; //5s
-    dio.options.receiveTimeout = 3000;
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     FormData formData = new FormData.from({
       'username': modellogin.username,
       'password': modellogin.password,
@@ -124,7 +124,7 @@ class _LoginState extends State<Login> {
     return new Scaffold(
       appBar: new AppBar(
         automaticallyImplyLeading: false,
-        title: Center(child: new Text('ລະ​ບົບ​ເກັບ​ກຳ​ລາຍ​ຈ່າຍ​ລາຍ​ຮັບ')),
+        title: Center(child: new Text('ລະ​ບົບ​ເກັບ​ກຳ​ເງີນ')),
         // automaticallyImplyLeading: false,
       ),
       body: ListView(

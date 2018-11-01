@@ -67,8 +67,8 @@ class _ListPaymentState extends State<ListPayment> {
       userID = token;
     });
 
-    dio.options.connectTimeout = 3000; //5s
-    dio.options.receiveTimeout = 3000;
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     try {
       Response response = await dio.get('${modelurl.url}api/listpayment');
       if (response.statusCode == 200) {
@@ -119,8 +119,8 @@ class _ListPaymentState extends State<ListPayment> {
 
 /*================= delete ===================*/
   Future delete(var id) async {
-    dio.options.connectTimeout = 3000; //5s
-    dio.options.receiveTimeout = 3000;
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     try {
       Response response =
           await dio.get('${modelurl.url}api/paymentdelete', data: {'id': id});

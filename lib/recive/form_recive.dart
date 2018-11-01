@@ -73,8 +73,8 @@ class _FormReciveState extends State<FormRecive> {
 /*==================== Load data payment show to field  ==================*/
   Future loaddatapayment() async {
     if (id != null) {
-      dio.options.connectTimeout = 3000; //5s
-      dio.options.receiveTimeout = 3000;
+      dio.options.connectTimeout = 12000; //5s
+      dio.options.receiveTimeout = 12000;
       try {
         Response response =
             await dio.get('${modelurl.url}api/listrecivepk', data: {'id': id});
@@ -97,8 +97,8 @@ class _FormReciveState extends State<FormRecive> {
 
 /*==================== Load list type payment  ==================*/
   Future loadlisttypepayment() async {
-    dio.options.connectTimeout = 3000; //5s
-    dio.options.receiveTimeout = 3000;
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     try {
       Response response = await dio.get('${modelurl.url}api/listtyperecive');
       if (response.statusCode == 200) {
@@ -157,8 +157,8 @@ class _FormReciveState extends State<FormRecive> {
     var type_id;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userID = await prefs.get('token');
-    dio.options.connectTimeout = 3000; //5s
-    dio.options.receiveTimeout = 3000;
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     for (var item in maptyperecive) {
       if (item['name'] == modelrecive.controller_type_recive_id.text) {
         type_id = item['id'];

@@ -67,8 +67,8 @@ class _ListDaocarState extends State<ListDaocar> {
       userID = token;
     });
 
-    dio.options.connectTimeout = 3000; //5s
-    dio.options.receiveTimeout = 3000;
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     try {
       Response sumresponse = await dio.get('${modelurl.url}api/sumdaocar');
       Response response = await dio.get('${modelurl.url}api/listdaocar');
@@ -121,8 +121,8 @@ class _ListDaocarState extends State<ListDaocar> {
 
 /*================= delete ===================*/
   Future delete(var id) async {
-    dio.options.connectTimeout = 3000; //5s
-    dio.options.receiveTimeout = 3000;
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     try {
       Response response =
           await dio.get('${modelurl.url}api/daocardelete', data: {'id': id});

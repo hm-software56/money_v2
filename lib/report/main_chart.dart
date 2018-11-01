@@ -63,8 +63,8 @@ class _MainChartState extends State<MainChart> {
   var recivem;
   Future getallhart() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    dio.options.connectTimeout = 6000; //5s
-    dio.options.receiveTimeout = 6000;
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     try {
       Response response = await dio.get('${modelurl.url}api/charty');
       Response responsem = await dio.get('${modelurl.url}api/chartm');

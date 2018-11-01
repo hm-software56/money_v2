@@ -103,8 +103,8 @@ class _HomeState extends State<Home> {
       photo_bg = bgphoto;
     });
 
-    dio.options.connectTimeout = 3000; //5s
-    dio.options.receiveTimeout = 3000;
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     try {
       Response response = await dio.get('${modelurl.url}api/home');
       if (response.statusCode == 200) {
