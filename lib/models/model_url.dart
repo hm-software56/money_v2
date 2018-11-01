@@ -10,10 +10,10 @@ class ModelUrl{
   {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var now = new DateTime.now();
-    var formatter = new DateFormat('h');
+    var formatter = new DateFormat('m');
     String formatted = formatter.format(now);
     print(formatted); 
-    prefs.setInt('time', int.parse(formatted)+2);
+    prefs.setInt('time', int.parse(formatted) + 10);
   }
 
 }

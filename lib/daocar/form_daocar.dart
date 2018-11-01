@@ -38,15 +38,15 @@ class _FormDaocarState extends State<FormDaocar> {
   Future<Null> checkloginexiped() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var now = new DateTime.now();
-    var formatter = new DateFormat('h');
+    var formatter = new DateFormat('m');
     String formatted = formatter.format(now);
-    if (int.parse(formatted) > prefs.getInt('time')) {
+    if (int.parse(formatted) >= prefs.getInt('time')) {
       prefs.remove('token');
       prefs.remove('time');
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Login()));
     } else {
-      prefs.setInt('time', int.parse(formatted) + 2);
+      prefs.setInt('time', int.parse(formatted) + 10);
     }
   }
   /*================ alert ================*/
