@@ -98,6 +98,7 @@ class _LoginState extends State<Login> {
     var status = await OneSignal.shared.getPermissionSubscriptionState();
     var playerId = status.subscriptionStatus.userId;
     prefs.setString('playerID', playerId);
+    print(playerId);
 
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {

@@ -33,7 +33,14 @@ class _HomeState extends State<Home> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Login()));
     } else {
-      prefs.setInt('time', int.parse(formatted) + 10);
+      if(prefs.getInt('token')==null)
+      {
+          Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Login()));
+      }else{
+          prefs.setInt('time', int.parse(formatted) + 10);
+      }
+      
     }
   }
 
