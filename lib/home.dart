@@ -618,7 +618,7 @@ class _HomeState extends State<Home> {
                       decoration: new BoxDecoration(color: Colors.lightBlue),
                       child: ListTile(
                         onTap: (){
-                          Navigator.of(context).pushNamed('/mainchart');
+                          Navigator.of(context).pushNamed('/homechart');
                         },
                         leading: Icon(
                           Icons.poll,

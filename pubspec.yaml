@@ -29,6 +29,7 @@ dependencies:
   flutter_launcher_icons: ^0.6.1
   onesignal: ^1.0.2
   charts_flutter: any
+  flutter_webview_plugin: any
 
 
 flutter_icons:
