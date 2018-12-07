@@ -77,7 +77,7 @@ class _FormPaymentState extends State<FormPayment> {
             await dio.get('${modelurl.url}api/listpaymentpk', data: {'id': id});
         if (response.statusCode == 200) {
           setState(() {
-            modelpayment.controller_amount.text = response.data['amount'];
+            modelpayment.controller_amount.text = response.data['amount']+'.00';
             modelpayment.controller_description.text =
                 response.data['description'];
             modelpayment.controller_date.text = response.data['date'];
@@ -161,7 +161,6 @@ class _FormPaymentState extends State<FormPayment> {
         type_id = item['id'];
       }
     }
-
     FormData formData = new FormData.from({
       'type_id': type_id,
       'amount': modelpayment.controller_amount.text,

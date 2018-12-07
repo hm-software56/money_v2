@@ -80,7 +80,7 @@ class _FormReciveState extends State<FormRecive> {
             await dio.get('${modelurl.url}api/listrecivepk', data: {'id': id});
         if (response.statusCode == 200) {
           setState(() {
-            modelrecive.controller_amount.text = response.data['amount'];
+            modelrecive.controller_amount.text = response.data['amount']+'.00';
             modelrecive.controller_description.text =
                 response.data['description'];
             modelrecive.controller_date.text = response.data['date'];
