@@ -30,6 +30,7 @@ dependencies:
   onesignal: ^1.0.2
   charts_flutter: any
   flutter_webview_plugin: any
+  animated_background: ^1.0.0
 
 
 flutter_icons:

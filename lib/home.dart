@@ -25,22 +25,16 @@ class _HomeState extends State<Home> {
   Future<Null> checkloginexiped() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var now = new DateTime.now();
-    var formatter = new DateFormat('m');
+    var formatter = new DateFormat('yyyyMMddhm');
     String formatted = formatter.format(now);
+   // print(formatted);
     if (int.parse(formatted) >= prefs.getInt('time')) {
       prefs.remove('token');
       prefs.remove('time');
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Login()));
     } else {
-      if(prefs.getInt('token')==null)
-      {
-          Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Login()));
-      }else{
           prefs.setInt('time', int.parse(formatted) + 10);
-      }
-      
     }
   }
 

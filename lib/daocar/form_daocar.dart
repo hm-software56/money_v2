@@ -38,7 +38,7 @@ class _FormDaocarState extends State<FormDaocar> {
   Future<Null> checkloginexiped() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var now = new DateTime.now();
-    var formatter = new DateFormat('m');
+    var formatter = new DateFormat('yyyyMMddhm');
     String formatted = formatter.format(now);
     if (int.parse(formatted) >= prefs.getInt('time')) {
       prefs.remove('token');
