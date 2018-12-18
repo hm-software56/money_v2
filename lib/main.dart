@@ -5,7 +5,8 @@ import 'package:money/login.dart';
 import 'package:money/payment/list_payment.dart';
 import 'package:money/recive/list_recive.dart';
 import 'package:money/report/home_chart.dart';
-import 'package:money/report/main_chart.dart';
+import 'package:money/report/report_payment.dart';
+import 'package:money/report/report_recive.dart';
 
 
 void main() {
@@ -18,8 +19,9 @@ final routes = <String, WidgetBuilder>{
     '/payment':(context) =>ListPayment(),
     '/recive':(context) =>ListRecive(),
     '/daocar':(context) =>ListDaocar(),
-    '/mainchart':(context) =>MainChart(),
     '/homechart':(context) =>HomeChart(),
+    '/reportpayment':(context) =>ReportPayment(),
+    '/reportrecive':(context) =>ReportRecive(),
     
   };
 class MyApp extends StatelessWidget {

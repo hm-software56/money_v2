@@ -172,7 +172,7 @@ class _ListDaocarState extends State<ListDaocar> {
                     itemCount: listdaocar != null ? listdaocar.length : 0,
                     itemBuilder: (BuildContext context, int index) {
                       int count = listdaocar.length - index;
-                      final formatter = new NumberFormat("#,###");
+                      final formatter = new NumberFormat("#,###.00");
                       var status;
                       if (listdaocar[index]['status'] == "Paid") {
                         status = "​ຈ່າຍ​ແລ້ວ";

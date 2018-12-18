@@ -452,7 +452,7 @@ class _HomeState extends State<Home> {
             ),
             trailing: Icon(Icons.bubble_chart),
             onTap: () {
-              // Navigator.of(context).pushNamed('/listhouseuser');
+               Navigator.of(context).pushNamed('/reportrecive');
             },
           ),
           Divider(),
@@ -472,6 +472,7 @@ class _HomeState extends State<Home> {
             trailing: Icon(Icons.insert_chart),
             onTap: () {
               // Navigator.of(context).pushNamed('/listhouseuser');
+              Navigator.of(context).pushNamed('/reportpayment');
             },
           ),
         ],

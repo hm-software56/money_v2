@@ -36,6 +36,7 @@ class _ListPaymentState extends State<ListPayment> {
       prefs.setInt('time', int.parse(formatted) + 10);
     }
   }
+
   /* ==================== alert ==============*/
   void alert(var title, var detail) {
     showDialog(
@@ -166,13 +167,13 @@ class _ListPaymentState extends State<ListPayment> {
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
-                :ListView.builder(
+                : ListView.builder(
                     itemCount: listpayment != null ? listpayment.length : 0,
                     itemBuilder: (BuildContext context, int index) {
-                      final formatter = new NumberFormat("#,###");
+                      final formatter = new NumberFormat("#,###.00");
                       // listpayment[index]['amount']
                       return new Column(
-                        children: <Widget>[ 
+                        children: <Widget>[
                           new ListTile(
                             leading: SizedBox(
                                 width: 60.0,

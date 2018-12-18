@@ -169,7 +169,7 @@ class _ListReciveState extends State<ListRecive> {
                 :ListView.builder(
                     itemCount: listrecive != null ? listrecive.length : 0,
                     itemBuilder: (BuildContext context, int index) {
-                      final formatter = new NumberFormat("#,###");
+                      final formatter = new NumberFormat("#,###.00");
                       // listpayment[index]['amount']
                       return new Column(
                         children: <Widget>[ 
