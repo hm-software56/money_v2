@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
       title: 'Money',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
+        backgroundColor: Colors.white,
       ),
       home: Login(),
       routes: routes,

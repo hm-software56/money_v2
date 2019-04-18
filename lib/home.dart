@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:money/payment/list_payment.dart';
+import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -27,14 +27,14 @@ class _HomeState extends State<Home> {
     var now = new DateTime.now();
     var formatter = new DateFormat('yyyyMMddhm');
     String formatted = formatter.format(now);
-   // print(formatted);
+    // print(formatted);
     if (int.parse(formatted) >= prefs.getInt('time')) {
       prefs.remove('token');
       prefs.remove('time');
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Login()));
     } else {
-          prefs.setInt('time', int.parse(formatted) + 10);
+      prefs.setInt('time', int.parse(formatted) + 10);
     }
   }
 
@@ -66,7 +66,7 @@ class _HomeState extends State<Home> {
   Future<Null> logOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
-    prefs.setInt('time',0);
+    prefs.setInt('time', 0);
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => Login()));
   }
@@ -235,6 +235,26 @@ class _HomeState extends State<Home> {
       }
     }
   }
+
+  List<CircularStackEntry> data = <CircularStackEntry>[
+    new CircularStackEntry(
+      <CircularSegmentEntry>[
+        new CircularSegmentEntry(500.0, Colors.red[200], rankKey: 'Q1'),
+        new CircularSegmentEntry(1000.0, Colors.green[200], rankKey: 'Q2'),
+        new CircularSegmentEntry(2000.0, Colors.blue[200], rankKey: 'Q3'),
+        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
+        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
+        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
+        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
+        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
+        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
+        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
+        new CircularSegmentEntry(1000.0, Colors.blueAccent, rankKey: 'Q4'),
+        new CircularSegmentEntry(1000.0, Colors.yellowAccent, rankKey: 'Q4'),
+      ],
+      rankKey: 'Quarterly Profits',
+    ),
+  ];
 
   @override
   void initState() {
@@ -452,7 +472,7 @@ class _HomeState extends State<Home> {
             ),
             trailing: Icon(Icons.bubble_chart),
             onTap: () {
-               Navigator.of(context).pushNamed('/reportrecive');
+              Navigator.of(context).pushNamed('/reportrecive');
             },
           ),
           Divider(),
@@ -500,6 +520,18 @@ class _HomeState extends State<Home> {
                 )
               : ListView(
                   children: <Widget>[
+                    AnimatedCircularChart(
+                      //key: _chartKey,
+                      size: const Size(300.0, 300.0),
+                      initialChartData: data,
+                      chartType: CircularChartType.Pie,
+                      holeLabel: '1/3',
+                      labelStyle: new TextStyle(
+                        color: Colors.blueGrey[600],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24.0,
+                      ),
+                    ),
                     SizedBox(height: 20.0),
                     Container(
                       decoration: new BoxDecoration(color: Colors.blue),
@@ -612,7 +644,7 @@ class _HomeState extends State<Home> {
                     Container(
                       decoration: new BoxDecoration(color: Colors.lightBlue),
                       child: ListTile(
-                        onTap: (){
+                        onTap: () {
                           Navigator.of(context).pushNamed('/homechart');
                         },
                         leading: Icon(
