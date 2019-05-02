@@ -155,7 +155,13 @@ class ApiController extends \yii\web\Controller
 		$w_first= date("Y-m-d", strtotime('monday this week '));  
         $w_last=date("Y-m-d", strtotime('sunday this week '));
         $modelcount=Payment::find()->where('date>="'.$w_first.'" and date<="'.$w_last.'"')->count();
-		$modelsum=Payment::find()->where('date>="'.$w_first.'" and date<="'.$w_last.'"')->sum('amount');
+        $modelsum=Payment::find()->where('date>="'.$w_first.'" and date<="'.$w_last.'"')->sum('amount');
+        if(empty($modelsum)){
+            $modelsum=0;
+        }
+        if(empty($modelsum)){
+            $modelcount=0;
+        }
         \Yii::$app->response->format = Response::FORMAT_JSON;
         return ['count'=>$modelcount,'sum'=>$modelsum];
     }
@@ -178,6 +184,12 @@ class ApiController extends \yii\web\Controller
         $modelcount=Payment::find()->where('date>="'.$m_first.'" and date<="'.$m_last.'"')->count();
 		$modelsum=Payment::find()->where('date>="'.$m_first.'" and date<="'.$m_last.'"')->sum('amount');
         \Yii::$app->response->format = Response::FORMAT_JSON;
+        if(empty($modelsum)){
+            $modelsum=0;
+        }
+        if(empty($modelsum)){
+            $modelcount=0;
+        }
         return ['count'=>$modelcount,'sum'=>$modelsum];
     }
 	/*============== End ===============*/
@@ -197,7 +209,13 @@ class ApiController extends \yii\web\Controller
 		$y_first=date("Y-m-d",strtotime("this year January 1st"));
         $y_last=date("Y-m-d",strtotime("this year December 31st"));
         $modelcount=Payment::find()->where('date>="'.$y_first.'" and date<="'.$y_last.'"')->count();
-		$modelsum=Payment::find()->where('date>="'.$y_first.'" and date<="'.$y_last.'"')->sum('amount');
+        $modelsum=Payment::find()->where('date>="'.$y_first.'" and date<="'.$y_last.'"')->sum('amount');
+        if(empty($modelsum)){
+            $modelsum=0;
+        }
+        if(empty($modelsum)){
+            $modelcount=0;
+        }
         \Yii::$app->response->format = Response::FORMAT_JSON;
         return ['count'=>$modelcount,'sum'=>$modelsum];
     }
@@ -219,7 +237,13 @@ class ApiController extends \yii\web\Controller
 		$w_first= date("Y-m-d", strtotime('monday this week '));  
         $w_last=date("Y-m-d", strtotime('sunday this week '));
         $modelcount=RecieveMoney::find()->where('date>="'.$w_first.'" and date<="'.$w_last.'"')->count();
-		$modelsum=RecieveMoney::find()->where('date>="'.$w_first.'" and date<="'.$w_last.'"')->sum('amount');
+        $modelsum=RecieveMoney::find()->where('date>="'.$w_first.'" and date<="'.$w_last.'"')->sum('amount');
+        if(empty($modelsum)){
+            $modelsum=0;
+        }
+        if(empty($modelsum)){
+            $modelcount=0;
+        }
         \Yii::$app->response->format = Response::FORMAT_JSON;
         return ['count'=>$modelcount,'sum'=>$modelsum];
     }
@@ -240,7 +264,13 @@ class ApiController extends \yii\web\Controller
 		$m_first=date('Y-m-d', strtotime("first day of this month"));
         $m_last=date('Y-m-d', strtotime("last day of this month"));
         $modelcount=RecieveMoney::find()->where('date>="'.$m_first.'" and date<="'.$m_last.'"')->count();
-		$modelsum=RecieveMoney::find()->where('date>="'.$m_first.'" and date<="'.$m_last.'"')->sum('amount');
+        $modelsum=RecieveMoney::find()->where('date>="'.$m_first.'" and date<="'.$m_last.'"')->sum('amount');
+        if(empty($modelsum)){
+            $modelsum=0;
+        }
+        if(empty($modelsum)){
+            $modelcount=0;
+        }
         \Yii::$app->response->format = Response::FORMAT_JSON;
         return ['count'=>$modelcount,'sum'=>$modelsum];
     }
@@ -261,7 +291,13 @@ class ApiController extends \yii\web\Controller
 		$y_first=date("Y-m-d",strtotime("this year January 1st"));
         $y_last=date("Y-m-d",strtotime("this year December 31st"));
         $modelcount=RecieveMoney::find()->where('date>="'.$y_first.'" and date<="'.$y_last.'"')->count();
-		$modelsum=RecieveMoney::find()->where('date>="'.$y_first.'" and date<="'.$y_last.'"')->sum('amount');
+        $modelsum=RecieveMoney::find()->where('date>="'.$y_first.'" and date<="'.$y_last.'"')->sum('amount');
+        if(empty($modelsum)){
+            $modelsum=0;
+        }
+        if(empty($modelsum)){
+            $modelcount=0;
+        }
         \Yii::$app->response->format = Response::FORMAT_JSON;
         return ['count'=>$modelcount,'sum'=>$modelsum];
     }

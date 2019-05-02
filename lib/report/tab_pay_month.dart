@@ -17,7 +17,7 @@ class _TabPayMonthState extends State<TabPayMonth> {
   ModelUrl modelurl = ModelUrl();
   int pageOffSet = 0;
   int pageSize = 10;
-  int allrecode =0;
+  int allrecode = 0;
   int sum = 0;
   /* ==================== alert ==============*/
   void alert(var title, var detail) {
@@ -52,7 +52,7 @@ class _TabPayMonthState extends State<TabPayMonth> {
       Response response =
           await dio.get('${modelurl.url}api/countpaymonthrecode');
       if (response.statusCode == 200) {
-       // print(response.data['count']);
+        // print(response.data['count']);
         setState(() {
           allrecode = int.parse(response.data['count']);
           sum = int.parse(response.data['sum']);
@@ -62,8 +62,8 @@ class _TabPayMonthState extends State<TabPayMonth> {
       alert('ມີ​ຂ​ໍ້​ຜິດ​ພາດ', 'ກວດ​ເບີ່ງ​ການ​ເຊື່ອມ​ຕໍ່​ເນັ​ດ.!');
     }
   }
-  _getTotal()
-  {
+
+  _getTotal() {
     getTotalCount();
     return allrecode;
   }
@@ -78,7 +78,7 @@ class _TabPayMonthState extends State<TabPayMonth> {
           '${modelurl.url}api/listpaymentmonthpage&pageoffset=$pageOffSet&pagesize=$pageSize');
       if (response.statusCode == 200) {
         setState(() {
-          pageOffSet = pageOffSet+10;
+          pageOffSet = pageOffSet + 10;
           print(pageOffSet);
         });
         // print(response.data);
@@ -88,15 +88,15 @@ class _TabPayMonthState extends State<TabPayMonth> {
       alert('ມີ​ຂ​ໍ້​ຜິດ​ພາດ', 'ກວດ​ເບີ່ງ​ການ​ເຊື່ອມ​ຕໍ່​ເນັ​ດ.!');
     }
   }
-  int i=0;
+
+  int i = 0;
   List<Widget> _itemListBuilder(context, entry) {
     final formatter = new NumberFormat("#,###.00");
-    if(i==0)
-    {
-    i= int.parse(entry['id']);
+    if (i == 0) {
+      i = int.parse(entry['id']);
     }
     return [
-      i== int.parse(entry['id'])
+      i == int.parse(entry['id'])
           ? Row(
               children: <Widget>[
                 Expanded(
@@ -180,11 +180,10 @@ class _TabPayMonthState extends State<TabPayMonth> {
   @override
   void initState() {
     super.initState();
-   // getTotalCount();
+    // getTotalCount();
   }
 
   Widget build(BuildContext context) {
-    
     return PagewiseListView(
         pageSize: pageSize,
         totalCount: _getTotal(),

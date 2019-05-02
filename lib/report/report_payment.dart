@@ -58,8 +58,8 @@ void initState() {
           body: TabBarView(
             children: [
                TabPayWeek(),
-              TabPayMonth(),
-              TabPayYear(),
+               TabPayMonth(),
+               TabPayYear(),
             ],
             
           ),
