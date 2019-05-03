@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:money/login.dart';
-import 'package:money/report/tab_pay_month.dart';
-import 'package:money/report/tab_pay_week.dart';
-import 'package:money/report/tab_pay_year.dart';
 import 'package:money/report/tab_recive_month.dart';
 import 'package:money/report/tab_recive_week.dart';
 import 'package:money/report/tab_recive_year.dart';

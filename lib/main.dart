@@ -7,6 +7,7 @@ import 'package:money/recive/list_recive.dart';
 import 'package:money/report/home_chart.dart';
 import 'package:money/report/report_payment.dart';
 import 'package:money/report/report_recive.dart';
+import 'package:money/report/search_payment.dart';
 
 
 void main() {
@@ -22,6 +23,7 @@ final routes = <String, WidgetBuilder>{
     '/homechart':(context) =>HomeChart(),
     '/reportpayment':(context) =>ReportPayment(),
     '/reportrecive':(context) =>ReportRecive(),
+    '/searchpayment':(context) =>SearchPayment(),
     
   };
 class MyApp extends StatelessWidget {

@@ -37,6 +37,14 @@ void initState() {
         length:3,
         child: Scaffold(
           appBar: AppBar(
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.search),
+                onPressed: (){
+                  Navigator.of(context).pushNamed('/searchpayment');
+                },
+              )
+            ],
             bottom: TabBar(
               tabs: [
                 Tab(child: Column(children: <Widget>[

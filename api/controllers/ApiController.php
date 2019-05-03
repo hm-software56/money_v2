@@ -515,6 +515,40 @@ class ApiController extends \yii\web\Controller
     }
 
 
+/*=============== search payment ==============*/
+public function actionListpaymentsearch(){
+    $first= date('Y-m-d',strtotime($_POST['date_start']));  
+    $last=date('Y-m-d',strtotime($_POST['date_end']));
+    ;
+    if(!empty($_POST['type_id']))
+    {
+    $model=Payment::find()
+        ->joinWith(['typePay','user'])
+        ->where('payment.date>="'.$first.'" and payment.date<="'.$last.'"')
+        ->andWhere(['type_pay_id'=>$_POST['type_id']])
+        ->asArray()->orderby('payment.date DESC,id DESC')->all();
+    }else{
+        $model=Payment::find()
+        ->joinWith(['typePay','user'])
+        ->where('payment.date>="'.$first.'" and payment.date<="'.$last.'"')
+        ->asArray()->orderby('payment.date DESC,id DESC')->all();
+    }
+    \Yii::$app->response->format = Response::FORMAT_JSON;
+    return $model;
+}
+public function actionCountpaymentsearch(){
+    $first= date('Y-m-d',strtotime($_POST['date_start']));  
+    $last=date('Y-m-d',strtotime($_POST['date_end']));
+    if (!empty($_POST['type_id'])) {
+        $modelsum=Payment::find()->where('date>="'.$first.'" and date<="'.$last.'"')
+        ->andWhere(['type_pay_id'=>$_POST['type_id']])->sum('amount');
+    } else{
+        $modelsum=Payment::find()->where('date>="'.$first.'" and date<="'.$last.'"')->sum('amount');
+    }
+    \Yii::$app->response->format = Response::FORMAT_JSON;
+    return ['sum'=>$modelsum];
+}
+/*============== End ===============*/
     public function actionTest()
     {
 		echo substr('8,000.00',0,-3);
