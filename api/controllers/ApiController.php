@@ -520,7 +520,7 @@ public function actionListpaymentsearch(){
     $first= date('Y-m-d',strtotime($_POST['date_start']));  
     $last=date('Y-m-d',strtotime($_POST['date_end']));
     ;
-    if(!empty($_POST['type_id']))
+    if($_POST['type_id']!='null')
     {
     $model=Payment::find()
         ->joinWith(['typePay','user'])
@@ -539,11 +539,46 @@ public function actionListpaymentsearch(){
 public function actionCountpaymentsearch(){
     $first= date('Y-m-d',strtotime($_POST['date_start']));  
     $last=date('Y-m-d',strtotime($_POST['date_end']));
-    if (!empty($_POST['type_id'])) {
+    if ($_POST['type_id']!='null') {
         $modelsum=Payment::find()->where('date>="'.$first.'" and date<="'.$last.'"')
         ->andWhere(['type_pay_id'=>$_POST['type_id']])->sum('amount');
     } else{
         $modelsum=Payment::find()->where('date>="'.$first.'" and date<="'.$last.'"')->sum('amount');
+    }
+    \Yii::$app->response->format = Response::FORMAT_JSON;
+    return ['sum'=>$modelsum];
+}
+/*============== End ===============*/
+
+/*=============== search recive ==============*/
+public function actionListrecievesearch(){
+    $first= date('Y-m-d',strtotime($_POST['date_start']));  
+    $last=date('Y-m-d',strtotime($_POST['date_end']));
+    ;
+    if($_POST['type_id']!='null')
+    {
+        $model=RecieveMoney::find()
+        ->joinWith(['tyeReceive','user'])
+        ->where('recieve_money.date>="'.$first.'" and recieve_money.date<="'.$last.'"')
+        ->andWhere(['tye_receive_id'=>$_POST['type_id']])
+        ->asArray()->orderby('recieve_money.date DESC,id DESC')->all();
+    }else{
+        $model=RecieveMoney::find()
+        ->joinWith(['tyeReceive','user'])
+		->where('recieve_money.date>="'.$first.'" and recieve_money.date<="'.$last.'"')
+        ->asArray()->orderby('recieve_money.date DESC,id DESC')->all();
+    }
+    \Yii::$app->response->format = Response::FORMAT_JSON;
+    return $model;
+}
+public function actionCountrecievesearch(){
+    $first= date('Y-m-d',strtotime($_POST['date_start']));  
+    $last=date('Y-m-d',strtotime($_POST['date_end']));
+    if ($_POST['type_id']!='null') {
+        $modelsum=RecieveMoney::find()->where('date>="'.$first.'" and date<="'.$last.'"')
+        ->andWhere(['tye_receive_id'=>$_POST['type_id']])->sum('amount');
+    } else{
+        $modelsum=RecieveMoney::find()->where('date>="'.$first.'" and date<="'.$last.'"')->sum('amount');
     }
     \Yii::$app->response->format = Response::FORMAT_JSON;
     return ['sum'=>$modelsum];

@@ -46,8 +46,6 @@ class _TabReciveWeekState extends State<TabReciveWeek> {
   Future getTotalCount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int token = await prefs.get('token');
-    dio.options.connectTimeout = 12000; //5s
-    dio.options.receiveTimeout = 12000;
     try {
       Response response =
           await dio.get('${modelurl.url}api/countreciveweekrecode');
@@ -65,8 +63,6 @@ class _TabReciveWeekState extends State<TabReciveWeek> {
   Future<List> getPageWeek(pageIndex) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int token = await prefs.get('token');
-    dio.options.connectTimeout = 12000; //5s
-    dio.options.receiveTimeout = 12000;
     try {
       Response response = await dio.get(
           '${modelurl.url}api/listreciveweekpage&pageoffset=$pageOffSet&pagesize=$pageSize');

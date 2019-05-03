@@ -46,8 +46,6 @@ class _TabPayWeekState extends State<TabPayWeek> {
   Future getTotalCount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int token = await prefs.get('token');
-    dio.options.connectTimeout = 12000; //5s
-    dio.options.receiveTimeout = 12000;
     try {
       Response response =
           await dio.get('${modelurl.url}api/countpayweekrecode');
@@ -65,8 +63,6 @@ class _TabPayWeekState extends State<TabPayWeek> {
   Future<List> getPageWeek(pageIndex) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int token = await prefs.get('token');
-    dio.options.connectTimeout = 12000; //5s
-    dio.options.receiveTimeout = 12000;
     try {
       Response response = await dio.get(
           '${modelurl.url}api/listpaymentweekpage&pageoffset=$pageOffSet&pagesize=$pageSize');

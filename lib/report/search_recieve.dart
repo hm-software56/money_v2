@@ -4,28 +4,28 @@ import 'package:intl/intl.dart';
 import 'package:money/models/model_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SearchPayment extends StatefulWidget {
-  SearchPayment({Key key}) : super(key: key);
+class SearchRecieve extends StatefulWidget {
+  SearchRecieve({Key key}) : super(key: key);
 
-  _SearchPaymentState createState() => _SearchPaymentState();
+  _SearchRecieveState createState() => _SearchRecieveState();
 }
 
-class _SearchPaymentState extends State<SearchPayment> {
+class _SearchRecieveState extends State<SearchRecieve> {
   var date_start = TextEditingController();
   var date_end = TextEditingController();
   var type_pay = TextEditingController();
   List listtypepay = [''];
   var maptypepay;
-  var listpayment;
-  var sumpayment;
+  var listrecieve;
+  var sumrecieve;
   Dio dio = Dio();
   ModelUrl modelurl = ModelUrl();
   /*==================== Load list type payment  ==================*/
-  Future loadlisttypepayment() async {
+  Future loadlisttyperecieve() async {
     dio.options.connectTimeout = 12000; //5s
     dio.options.receiveTimeout = 12000;
     try {
-      Response response = await dio.get('${modelurl.url}api/listtypepay');
+      Response response = await dio.get('${modelurl.url}api/listtyperecive');
       if (response.statusCode == 200) {
         for (var item in response.data) {
           listtypepay.add('${item['name']}');
@@ -133,14 +133,14 @@ class _SearchPaymentState extends State<SearchPayment> {
           date_end.text, // use for create or update if id=null is create
     });
     try {
-      Response response = await dio.post('${modelurl.url}api/listpaymentsearch',
+      Response response = await dio.post('${modelurl.url}api/listrecievesearch',
           data: formData);
       Response responsesum = await dio
-          .post('${modelurl.url}api/countpaymentsearch', data: formData);
+          .post('${modelurl.url}api/countrecievesearch', data: formData);
       if (response.statusCode == 200) {
         setState(() {
-          listpayment = response.data;
-          sumpayment = responsesum.data['sum'];
+          listrecieve= response.data;
+          sumrecieve = responsesum.data['sum'];
         });
       }
     } on DioError catch (e) {
@@ -153,7 +153,7 @@ class _SearchPaymentState extends State<SearchPayment> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadlisttypepayment();
+    loadlisttyperecieve();
   }
 
   bool ss = true;
@@ -162,7 +162,7 @@ class _SearchPaymentState extends State<SearchPayment> {
       appBar: AppBar(
         title: Text('ຄົ້ນ​ຫາ​ລາຍ​ຈ່າຍ'),
       ),
-      body: sumpayment == null
+      body: sumrecieve == null
           ? Container(
               padding: EdgeInsets.all(10),
               child: ListView(
@@ -238,7 +238,7 @@ class _SearchPaymentState extends State<SearchPayment> {
               ),
             )
           : ListView.builder(
-              itemCount: listpayment != null ? listpayment.length : 0,
+              itemCount: listtypepay != null ? listtypepay.length : 0,
               itemBuilder: (BuildContext context, int index) {
                 final formatter = new NumberFormat("#,###.00");
                 // listpayment[index]['amount']
@@ -276,7 +276,7 @@ class _SearchPaymentState extends State<SearchPayment> {
                                       children: <Widget>[
                                         Text(
                                           formatter.format(
-                                                  int.parse('$sumpayment')) +
+                                                  int.parse('$sumrecieve')) +
                                               ' ​ກີບ',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -296,7 +296,7 @@ class _SearchPaymentState extends State<SearchPayment> {
                           height: 60.0,
                           child: CircleAvatar(
                             backgroundImage: NetworkImage(
-                                '${modelurl.urlimg}${listpayment[index]['user']['photo']}'),
+                                '${modelurl.urlimg}${listtypepay[index]['user']['photo']}'),
                           )),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -316,7 +316,7 @@ class _SearchPaymentState extends State<SearchPayment> {
                                           MainAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          listpayment[index]['typePay']['name'],
+                                          listtypepay[index]['tyeReceive']['name'],
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14.0,
@@ -324,19 +324,19 @@ class _SearchPaymentState extends State<SearchPayment> {
                                         ),
                                         Text(
                                           formatter.format(int.parse(
-                                                  listpayment[index]
+                                                  listtypepay[index]
                                                       ['amount'])) +
                                               ' ກີບ',
                                           style: TextStyle(color: Colors.red),
                                         ),
                                         Text(
-                                          listpayment[index]['description'],
+                                          listtypepay[index]['description'],
                                           overflow: TextOverflow.ellipsis,
                                           softWrap: true,
                                           maxLines: 2,
                                         ),
                                         Text(
-                                          listpayment[index]['date'],
+                                          listtypepay[index]['date'],
                                         ),
                                       ],
                                     ),

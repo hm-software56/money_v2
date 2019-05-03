@@ -236,26 +236,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-  List<CircularStackEntry> data = <CircularStackEntry>[
-    new CircularStackEntry(
-      <CircularSegmentEntry>[
-        new CircularSegmentEntry(500.0, Colors.red[200], rankKey: 'Q1'),
-        new CircularSegmentEntry(1000.0, Colors.green[200], rankKey: 'Q2'),
-        new CircularSegmentEntry(2000.0, Colors.blue[200], rankKey: 'Q3'),
-        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
-        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
-        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
-        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
-        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
-        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
-        new CircularSegmentEntry(1000.0, Colors.yellow[200], rankKey: 'Q4'),
-        new CircularSegmentEntry(1000.0, Colors.blueAccent, rankKey: 'Q4'),
-        new CircularSegmentEntry(1000.0, Colors.yellowAccent, rankKey: 'Q4'),
-      ],
-      rankKey: 'Quarterly Profits',
-    ),
-  ];
-
   @override
   void initState() {
     // TODO: implement initState
@@ -520,19 +500,6 @@ class _HomeState extends State<Home> {
                 )
               : ListView(
                   children: <Widget>[
-                    AnimatedCircularChart(
-                      //key: _chartKey,
-                      size: const Size(300.0, 300.0),
-                      initialChartData: data,
-                      chartType: CircularChartType.Pie,
-                      holeLabel: '1/3',
-                      labelStyle: new TextStyle(
-                        color: Colors.blueGrey[600],
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24.0,
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
                     Container(
                       decoration: new BoxDecoration(color: Colors.blue),
                       child: ListTile(

@@ -46,8 +46,6 @@ class _TabPayYearState extends State<TabPayYear> {
   Future getTotalCount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int token = await prefs.get('token');
-    dio.options.connectTimeout = 12000; //5s
-    dio.options.receiveTimeout = 12000;
     try {
       Response response =
           await dio.get('${modelurl.url}api/countpayyearrecode');
@@ -71,8 +69,6 @@ class _TabPayYearState extends State<TabPayYear> {
   Future<List> getPageMonth(pageIndex) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int token = await prefs.get('token');
-    dio.options.connectTimeout = 12000; //5s
-    dio.options.receiveTimeout = 12000;
     try {
       Response response = await dio.get(
           '${modelurl.url}api/listpaymentyearpage&pageoffset=$pageOffSet&pagesize=$pageSize');

@@ -46,8 +46,6 @@ class _TabReciveYearState extends State<TabReciveYear> {
   Future getTotalCount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int token = await prefs.get('token');
-    dio.options.connectTimeout = 12000; //5s
-    dio.options.receiveTimeout = 12000;
     try {
       Response response =
           await dio.get('${modelurl.url}api/countreciveyearrecode');
@@ -71,8 +69,6 @@ class _TabReciveYearState extends State<TabReciveYear> {
   Future<List> getPageMonth(pageIndex) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int token = await prefs.get('token');
-    dio.options.connectTimeout = 12000; //5s
-    dio.options.receiveTimeout = 12000;
     try {
       Response response = await dio.get(
           '${modelurl.url}api/listreciveyearpage&pageoffset=$pageOffSet&pagesize=$pageSize');
