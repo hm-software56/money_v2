@@ -139,7 +139,7 @@ class _LoginState extends State<Login> {
               backgroundColor: Colors.blue,
               radius: 48.0,
               child: Image(
-                image: NetworkImage('${modelurl.urlimg}logo.jpg'),
+                image: NetworkImage('${modelurl.urlimg}logo.png'),
               ),
             ),
           ),
