@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:money/login.dart';
 import 'package:money/models/model_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,26 +14,41 @@ class SearchRecieve extends StatefulWidget {
 class _SearchRecieveState extends State<SearchRecieve> {
   var date_start = TextEditingController();
   var date_end = TextEditingController();
-  var type_pay = TextEditingController();
-  List listtypepay = [''];
-  var maptypepay;
+  var type_recieve = TextEditingController();
+  List listtyperecieve = [''];
+  var maptyperecieve;
   var listrecieve;
   var sumrecieve;
+  bool isloading = false;
   Dio dio = Dio();
   ModelUrl modelurl = ModelUrl();
+
+  /*========== Login expired ================*/
+  Future<Null> checkloginexiped() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var now = new DateTime.now();
+    var formatter = new DateFormat('yyyyMMddhm');
+    String formatted = formatter.format(now);
+    if (int.parse(formatted) >= prefs.getInt('time')) {
+      prefs.remove('token');
+      prefs.remove('time');
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Login()));
+    } else {
+      prefs.setInt('time', int.parse(formatted) + 10);
+    }
+  }
   /*==================== Load list type payment  ==================*/
   Future loadlisttyperecieve() async {
-    dio.options.connectTimeout = 12000; //5s
-    dio.options.receiveTimeout = 12000;
     try {
       Response response = await dio.get('${modelurl.url}api/listtyperecive');
       if (response.statusCode == 200) {
         for (var item in response.data) {
-          listtypepay.add('${item['name']}');
+          listtyperecieve.add('${item['name']}');
         }
         setState(() {
-          maptypepay = response.data;
-          listtypepay = listtypepay;
+          maptyperecieve = response.data;
+          listtyperecieve = listtyperecieve;
         });
       }
     } on DioError catch (e) {
@@ -115,14 +131,14 @@ class _SearchRecieveState extends State<SearchRecieve> {
   }
 
   Future searchpayment() async {
+    setState(() {
+     isloading=true; 
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int token = await prefs.get('token');
-    print(date_start.text);
-    print(date_end.text);
-    print(type_pay.text);
     var type_id;
-    for (var item in maptypepay) {
-      if (item['name'] == type_pay.text) {
+    for (var item in maptyperecieve) {
+      if (item['name'] == type_recieve.text) {
         type_id = item['id'];
       }
     }
@@ -132,6 +148,8 @@ class _SearchRecieveState extends State<SearchRecieve> {
       'date_end':
           date_end.text, // use for create or update if id=null is create
     });
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     try {
       Response response = await dio.post('${modelurl.url}api/listrecievesearch',
           data: formData);
@@ -139,12 +157,15 @@ class _SearchRecieveState extends State<SearchRecieve> {
           .post('${modelurl.url}api/countrecievesearch', data: formData);
       if (response.statusCode == 200) {
         setState(() {
-          listrecieve= response.data;
+          isloading=false;
+          listrecieve = response.data;
           sumrecieve = responsesum.data['sum'];
         });
       }
     } on DioError catch (e) {
-      setState(() {});
+      setState(() {
+        isloading=false;
+      });
       alert('ມີ​ຂ​ໍ້​ຜິດ​ພາດ', 'ກວດ​ເບີ່ງ​ການ​ເຊື່ອມ​ຕໍ່​ເນັ​ດ.!');
     }
   }
@@ -153,6 +174,7 @@ class _SearchRecieveState extends State<SearchRecieve> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkloginexiped();
     loadlisttyperecieve();
   }
 
@@ -160,7 +182,7 @@ class _SearchRecieveState extends State<SearchRecieve> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ຄົ້ນ​ຫາ​ລາຍ​ຈ່າຍ'),
+        title: Text('ຄົ້ນ​ຫາ​ລາຍ​ຮັບ'),
       ),
       body: sumrecieve == null
           ? Container(
@@ -196,19 +218,19 @@ class _SearchRecieveState extends State<SearchRecieve> {
                   SizedBox(height: 10.0),
                   InputDecorator(
                     decoration: InputDecoration(
-                      labelText: 'ເລືອກ​ປະ​ເພດ​ລາຍ​ຈ່າຍ',
+                      labelText: 'ເລືອກ​ປະ​ເພດ​ລາຍ​ຮັບ',
                     ),
-                    isEmpty: type_pay.text == null,
+                    isEmpty: type_recieve.text == null,
                     child: new DropdownButtonHideUnderline(
                       child: new DropdownButton<String>(
-                        value: type_pay.text,
+                        value: type_recieve.text,
                         isDense: true,
                         onChanged: (String newValue) {
                           setState(() {
-                            type_pay.text = newValue;
+                            type_recieve.text = newValue;
                           });
                         },
-                        items: listtypepay.map((value) {
+                        items: listtyperecieve.map((value) {
                           return new DropdownMenuItem<String>(
                             value: value,
                             child: new Text(value),
@@ -218,27 +240,31 @@ class _SearchRecieveState extends State<SearchRecieve> {
                     ),
                   ),
                   SizedBox(height: 10.0),
-                  RaisedButton.icon(
-                    icon: Icon(
-                      Icons.search,
-                      color: Colors.white,
-                    ),
-                    label: Text(
-                      'ຄົ້ນ​ຫາ',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    key: null,
-                    onPressed: () {
-                      searchpayment();
-                    },
-                    // onPressed: loginpress,
-                    color: Colors.blue,
-                  ),
+                  isloading
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : RaisedButton.icon(
+                          icon: Icon(
+                            Icons.search,
+                            color: Colors.white,
+                          ),
+                          label: Text(
+                            'ຄົ້ນ​ຫາ',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          key: null,
+                          onPressed: () {
+                            searchpayment();
+                          },
+                          // onPressed: loginpress,
+                          color: Colors.blue,
+                        ),
                 ],
               ),
             )
           : ListView.builder(
-              itemCount: listtypepay != null ? listtypepay.length : 0,
+              itemCount: listrecieve != null ? listrecieve.length : 0,
               itemBuilder: (BuildContext context, int index) {
                 final formatter = new NumberFormat("#,###.00");
                 // listpayment[index]['amount']
@@ -256,7 +282,7 @@ class _SearchRecieveState extends State<SearchRecieve> {
                                     child: Column(
                                       children: <Widget>[
                                         Text(
-                                          'ລວມ​ລາຍ​ຈ່າຍ',
+                                          'ລວມ​ລາຍ​ຮັບ',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.black),
@@ -296,7 +322,7 @@ class _SearchRecieveState extends State<SearchRecieve> {
                           height: 60.0,
                           child: CircleAvatar(
                             backgroundImage: NetworkImage(
-                                '${modelurl.urlimg}${listtypepay[index]['user']['photo']}'),
+                                '${modelurl.urlimg}${listrecieve[index]['user']['photo']}'),
                           )),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -316,7 +342,8 @@ class _SearchRecieveState extends State<SearchRecieve> {
                                           MainAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          listtypepay[index]['tyeReceive']['name'],
+                                          listrecieve[index]['tyeReceive']
+                                              ['name'],
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14.0,
@@ -324,19 +351,19 @@ class _SearchRecieveState extends State<SearchRecieve> {
                                         ),
                                         Text(
                                           formatter.format(int.parse(
-                                                  listtypepay[index]
+                                                  listrecieve[index]
                                                       ['amount'])) +
                                               ' ກີບ',
                                           style: TextStyle(color: Colors.red),
                                         ),
                                         Text(
-                                          listtypepay[index]['description'],
+                                          listrecieve[index]['description'],
                                           overflow: TextOverflow.ellipsis,
                                           softWrap: true,
                                           maxLines: 2,
                                         ),
                                         Text(
-                                          listtypepay[index]['date'],
+                                          listrecieve[index]['date'],
                                         ),
                                       ],
                                     ),
@@ -345,9 +372,6 @@ class _SearchRecieveState extends State<SearchRecieve> {
                           ),
                         ],
                       ),
-                    ),
-                    new Divider(
-                      height: 2.0,
                     ),
                   ],
                 );

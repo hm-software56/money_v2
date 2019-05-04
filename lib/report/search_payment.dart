@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:money/login.dart';
 import 'package:money/models/model_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,8 +19,26 @@ class _SearchPaymentState extends State<SearchPayment> {
   var maptypepay;
   var listpayment;
   var sumpayment;
+  bool isloading=false;
   Dio dio = Dio();
   ModelUrl modelurl = ModelUrl();
+
+  /*========== Login expired ================*/
+  Future<Null> checkloginexiped() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var now = new DateTime.now();
+    var formatter = new DateFormat('yyyyMMddhm');
+    String formatted = formatter.format(now);
+    if (int.parse(formatted) >= prefs.getInt('time')) {
+      prefs.remove('token');
+      prefs.remove('time');
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Login()));
+    } else {
+      prefs.setInt('time', int.parse(formatted) + 10);
+    }
+  }
+  
   /*==================== Load list type payment  ==================*/
   Future loadlisttypepayment() async {
     dio.options.connectTimeout = 12000; //5s
@@ -115,17 +134,19 @@ class _SearchPaymentState extends State<SearchPayment> {
   }
 
   Future searchpayment() async {
+    setState(() {
+     isloading=true; 
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int token = await prefs.get('token');
-    print(date_start.text);
-    print(date_end.text);
-    print(type_pay.text);
     var type_id;
     for (var item in maptypepay) {
       if (item['name'] == type_pay.text) {
         type_id = item['id'];
       }
     }
+    dio.options.connectTimeout = 12000; //5s
+    dio.options.receiveTimeout = 12000;
     FormData formData = new FormData.from({
       'type_id': type_id,
       'date_start': date_start.text,
@@ -139,12 +160,15 @@ class _SearchPaymentState extends State<SearchPayment> {
           .post('${modelurl.url}api/countpaymentsearch', data: formData);
       if (response.statusCode == 200) {
         setState(() {
+          isloading=false;
           listpayment = response.data;
           sumpayment = responsesum.data['sum'];
         });
       }
     } on DioError catch (e) {
-      setState(() {});
+      setState(() {
+        isloading=false;
+      });
       alert('ມີ​ຂ​ໍ້​ຜິດ​ພາດ', 'ກວດ​ເບີ່ງ​ການ​ເຊື່ອມ​ຕໍ່​ເນັ​ດ.!');
     }
   }
@@ -153,6 +177,7 @@ class _SearchPaymentState extends State<SearchPayment> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkloginexiped();
     loadlisttypepayment();
   }
 
@@ -218,7 +243,8 @@ class _SearchPaymentState extends State<SearchPayment> {
                     ),
                   ),
                   SizedBox(height: 10.0),
-                  RaisedButton.icon(
+                  isloading?Center(child: CircularProgressIndicator(),)
+                  :RaisedButton.icon(
                     icon: Icon(
                       Icons.search,
                       color: Colors.white,
@@ -346,9 +372,7 @@ class _SearchPaymentState extends State<SearchPayment> {
                         ],
                       ),
                     ),
-                    new Divider(
-                      height: 2.0,
-                    ),
+                    
                   ],
                 );
               },
